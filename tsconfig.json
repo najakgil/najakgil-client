@@ -16,6 +16,8 @@
 
     /* Linting */
     "strict": true,
+    // 추가
+    // "strictNullChecks": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
