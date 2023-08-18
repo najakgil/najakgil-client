@@ -88,12 +88,12 @@ const MakeUI: React.FC = () => {
   const [text, setText] = useState("");
   const { editor, onReady } = useFabricJSEditor();
 
-  // const onAddCircle = () => {
-  //   editor?.addCircle();
-  // };
-  // const onAddRectangle = () => {
-  //   editor?.addRectangle();
-  // };
+  const onAddCircle = () => {
+    editor?.addCircle();
+  };
+  const onAddRectangle = () => {
+    editor?.addRectangle();
+  };
   const onAddText = () => {
     editor?.addText(text);
     setText("");
@@ -220,7 +220,6 @@ const MakeUI: React.FC = () => {
                 isSelectedDecorate={selectedDecorateTool === "decorate-text"}
                 onClick={() => {
                   setSelectedDecorateTool("decorate-text");
-                  onAddText();
                 }}
               >
                 텍스트
@@ -229,7 +228,6 @@ const MakeUI: React.FC = () => {
                 isSelectedDecorate={selectedDecorateTool === "decorate-image"}
                 onClick={() => {
                   setSelectedDecorateTool("decorate-image");
-                  onAddImage();
                 }}
               >
                 사진
@@ -246,7 +244,6 @@ const MakeUI: React.FC = () => {
                 isSelectedDecorate={selectedDecorateTool === "decorate-pen"}
                 onClick={() => {
                   setSelectedDecorateTool("decorate-pen");
-                  toggleDraw();
                 }}
               >
                 펜
@@ -262,19 +259,7 @@ const MakeUI: React.FC = () => {
               {selectedDecorateTool === "decorate-text" && (
                 <DecorateTextContainer>
                   <DecorateTextBox>
-                    <div
-                      style={{
-                        color: "#AFD8FF",
-                        textAlign: "center",
-                        fontFamily: "Noto Sans",
-                        fontSize: "12px",
-                        fontStyle: "normal",
-                        fontWeight: 400,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      원하는 텍스트를 입력해 주세요
-                    </div>
+                    <DecorateGuide>원하는 텍스트를 입력해 주세요</DecorateGuide>
                     <input
                       name="text"
                       type="text"
@@ -285,9 +270,11 @@ const MakeUI: React.FC = () => {
                         height: "38px",
                         borderRadius: "3px",
                         border: "1px solid #AFD8FF",
+                        paddingLeft: "10px",
                       }}
                     />
                     <button
+                      onClick={onAddText}
                       style={{
                         width: "210px",
                         height: "38px",
@@ -308,13 +295,89 @@ const MakeUI: React.FC = () => {
                 </DecorateTextContainer>
               )}
               {selectedDecorateTool === "decorate-image" && (
-                <DecorateImageContainer></DecorateImageContainer>
+                <DecorateImageContainer>
+                  <DecorateImageBox>
+                    <DecorateGuide>원하는 사진을 선택해 주세요</DecorateGuide>
+                    <button
+                      onClick={onAddImage}
+                      style={{
+                        width: "210px",
+                        height: "38px",
+                        borderRadius: "3px",
+                        background: "#AFD8FF",
+                        color: "#FFF",
+                        textAlign: "center",
+                        fontFamily: "Noto Sans",
+                        fontSize: "18px",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        lineHeight: "140%",
+                      }}
+                    >
+                      사진 선택하기
+                    </button>
+                  </DecorateImageBox>
+                </DecorateImageContainer>
               )}
-              {selectedDecorateTool === "decorate-shate" && (
-                <DecorateShapeContainer></DecorateShapeContainer>
+              {selectedDecorateTool === "decorate-shape" && (
+                <DecorateShapeContainer>
+                  <DecorateShapeBox>
+                    <DecorateGuide>원하는 도형을 선택해 주세요</DecorateGuide>
+                    <div style={{ display: "flex", gap: "30px" }}>
+                      <div
+                        onClick={onAddRectangle}
+                        style={{
+                          border: "1px solid #AFD8FF",
+                          background: "#AFD8FF",
+                          width: "80px",
+                          height: "80px",
+                          color: "#FFF",
+                          textAlign: "center",
+                          fontFamily: "Noto Sans",
+                          fontSize: "12px",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "140%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        네모
+                      </div>
+                      <div
+                        onClick={onAddCircle}
+                        style={{
+                          border: "1px solid #AFD8FF",
+                          borderRadius: "100px",
+                          background: "#AFD8FF",
+                          width: "80px",
+                          height: "80px",
+                          color: "#FFF",
+                          textAlign: "center",
+                          fontFamily: "Noto Sans",
+                          fontSize: "12px",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "140%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        동그라미
+                      </div>
+                    </div>
+                  </DecorateShapeBox>
+                </DecorateShapeContainer>
               )}
               {selectedDecorateTool === "decorate-pen" && (
-                <DecoratePenContainer></DecoratePenContainer>
+                <DecoratePenContainer>
+                  <DecoratePenBox>
+                    <DecorateGuide>원하는 도형을 선택해 주세요</DecorateGuide>
+                    <img onClick={toggleDraw} src="/assets/icon/pen.svg" />
+                  </DecoratePenBox>
+                </DecoratePenContainer>
               )}
             </DecorateContainer>
           </DecorateBox>
@@ -385,6 +448,7 @@ const StyledMakeUI = styled.div`
 `;
 
 const Viewer = styled.img<ViewerProps>`
+  width: 360px;
   height: 360px;
   background: ${(props) => props.backgroundhex};
   background-image: url(${(props) => props.backgroundimage || "none"});
@@ -554,29 +618,87 @@ const DecorateContainer = styled.div`
   /* background: olive; */
 `;
 
+const DecorateGuide = styled.p`
+  color: #afd8ff;
+  text-align: center;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  margin-bottom: 10px;
+`;
+
 const DecorateTextContainer = styled.div`
   height: calc(100vh - 559px);
-  background: blue;
+  /* background: blue; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const DecorateTextBox = styled.div`
   width: 230px;
   height: 134px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 `;
 
 const DecorateImageContainer = styled.div`
   height: calc(100vh - 559px);
-  background: olive;
+  /* background: olive; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DecorateImageBox = styled.div`
+  width: 230px;
+  height: 134px;
+  /* background: red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const DecorateShapeContainer = styled.div`
   height: calc(100vh - 559px);
-  background: olive;
+  /* background: olive; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DecorateShapeBox = styled.div`
+  width: 230px;
+  height: 134px;
+  /* background: red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const DecoratePenContainer = styled.div`
   height: calc(100vh - 559px);
-  background: #696141;
+  /* background: #696141; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DecoratePenBox = styled.div`
+  width: 230px;
+  height: 134px;
+  /* background: red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 // background
