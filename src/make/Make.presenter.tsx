@@ -10,7 +10,7 @@ import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
 // import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 // import html2canvas from "html2canvas";
-// import { saveAs } from "file-saver";
+import { saveAs } from "file-saver";
 import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
 import domtoimage from 'dom-to-image';
 
@@ -190,11 +190,11 @@ const MakeUI: React.FC = () => {
 
 
 
-// 다운로드
+// 완성하기 버튼
 const cardRef = useRef<HTMLImageElement | null>(null);
 const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
 console.log("미리보기", previewCard)
-const onDownloadButton = async () => {
+const onCompeleteButton = async () => {
   const card = cardRef.current;
   if (!card) {
     return;
@@ -218,53 +218,26 @@ const onDownloadButton = async () => {
   }
 };
 
-// const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
-// console.log("미리보기 카드", previewCard)
-
-// const handleCompleteButtonClick = async () => {
-//   const makeCardElement = document.getElementById('make-card'); // MakeCard 컴포넌트를 감싸는 최상위 요소의 id를 가져옵니다.
-
-//   if (!makeCardElement) {
-//     return;
-//   }
-
-//   try {
-//     // Create a promise that resolves when all images are loaded
-//     const imagesLoadedPromise = new Promise<void>((resolve, reject) => {
-//       const images = makeCardElement.getElementsByTagName('img');
-//       let loadedCount = 0;
-
-//       for (let i = 0; i < images.length; i++) {
-//         images[i].addEventListener('load', () => {
-//           loadedCount++;
-//           if (loadedCount === images.length) {
-//             resolve();
-//           }
-//         });
-
-//         images[i].addEventListener('error', () => {
-//           reject(new Error('Image loading failed'));
-//         });
-//       }
-//     });
-
-//     // Wait for images to load
-//     await imagesLoadedPromise;
-
-//     // Convert the MakeCard element to a PNG image base64-encoded data URL
-//     const dataUrl = await domtoimage.toPng(makeCardElement);
-
-//     // Now you can use the base64-encoded dataUrl as needed
-//     setPreviewCard(dataUrl);
-//     console.log(dataUrl); // You can remove this line, it's just for demonstration
-//   } catch (error) {
-//     console.error("Error while creating PNG image:", error);
-//   }
-// };
+  // 다운로드
+  const onDownloadButton = () => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
+    }
+    const filter = (node: Node) => {
+      if (node instanceof Element) {
+        return node.tagName !== "BUTTON";
+      }
+      return true;
+    };
+    domtoimage.toBlob(card, { filter: filter }).then((blob) => {
+      saveAs(blob, "my-gachon-president.png");
+    });
+  };
 
   return (
     <StyledMakeUI>
-      <MakeCard ref={cardRef}>
+      <div ref={cardRef} style={{width:"360px", height:"360px", position:"relative"}}>
         <Viewer
           src={selectedCharacterItem}
           backgroundhex={hex}
@@ -282,10 +255,10 @@ const onDownloadButton = async () => {
           className="sample-canvas"
           onReady={onReady}
         />
-      </MakeCard>
+      </div>
       <CompleteButton
         onClick={() => {
-          onDownloadButton();
+          onCompeleteButton();
         }}
       >
         <img
@@ -296,6 +269,20 @@ const onDownloadButton = async () => {
         <br />
         완성하기
       </CompleteButton>
+      {/* 임시 다운로드 버튼 */}
+      <TemporaryButton
+        onClick={() => {
+          onDownloadButton();
+        }}
+      >
+        <img
+          alt="complete"
+          src="/assets/icon/download.svg"
+          style={{ width: "24px" }}
+        />
+        <br />
+        다운로드
+      </TemporaryButton>
       <input
         style={{ display: "none" }}
         ref={imageRef}
@@ -590,11 +577,11 @@ const StyledMakeUI = styled.div`
   height: calc(100vh - 110px);
 `;
 
-const MakeCard = styled.div`
-  width: 360px;
-  height: 360px;
-  position: relative;
-`
+// const MakeCard = styled.div`
+//   width: 360px;
+//   height: 360px;
+//   position: relative;
+// `
 
 const Viewer = styled.img<ViewerProps>`
   width: 360px;
@@ -612,7 +599,25 @@ const CompleteButton = styled.button`
   top: 330px;
   right: 16px;
   background-color: #2294ff;
+  border-radius: 50px;
+  box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
+
   color: #fff;
+  text-align: center;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%; /* 16.8px */
+`;
+
+const TemporaryButton = styled.button`
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  top: 260px;
+  right: 16px;
+  background-color: #AFD8FF;
   border-radius: 50px;
   box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
 
