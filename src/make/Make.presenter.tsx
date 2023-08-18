@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { CharacterToolItemList } from "./CharacterToolItemList";
 import { Colorful } from "@uiw/react-color";
@@ -7,8 +7,12 @@ import { useRecoilState } from "recoil";
 import { CharacterChoiceAtom } from "../recoil/CharacterChoiceAtom";
 import { BackgroundColorChoiceAtom } from "../recoil/BackgroundColorChoiceAtom";
 import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
-import { fabric } from "fabric";
+// import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+// import html2canvas from "html2canvas";
+// import { saveAs } from "file-saver";
+import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
+import domtoimage from 'dom-to-image';
 
 interface ViewerProps {
   src: string;
@@ -64,7 +68,7 @@ const MakeUI: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
+    if (file instanceof File) {
       handleUploadImage(file);
     }
   };
@@ -88,61 +92,200 @@ const MakeUI: React.FC = () => {
   const [text, setText] = useState("");
   const { editor, onReady } = useFabricJSEditor();
 
+  // 캔버스 > 높이 조절
+  useEffect(() => {
+    if (editor?.canvas) {
+      editor.canvas.setHeight(360);
+    }
+  }, [editor?.canvas]);
+
+  // 캔버스 > 도형
   const onAddCircle = () => {
     editor?.addCircle();
   };
   const onAddRectangle = () => {
     editor?.addRectangle();
   };
+
+  // 캔버스 > 텍스트
   const onAddText = () => {
     editor?.addText(text);
     setText("");
   };
 
+  // 캔버스 > 펜
   const toggleDraw = () => {
     editor.canvas.isDrawingMode = !editor.canvas.isDrawingMode;
   };
 
+  // 캔버스 > 초기화
   const clear = () => {
-    editor.canvas.clear();
+    editor?.canvas.clear();
   };
 
-  const onAddImage = () => {
-    fabric.Image.fromURL(
-      "https://www.neopoly.de/stylesheets/logo.jpg",
-      (img) => {
-        editor.canvas.add(img);
-      }
-    );
-  };
+  // 캔버스 > 사진
+  // const onAddImage = () => {
+  //   if (imageRef.current) {
+  //     imageRef.current.click();
+  //   }
+  // };
 
+  // const onAddImage = () => {
+  //   fabric.Image.fromURL(
+  //     "https://www.neopoly.de/stylesheets/logo.jpg",
+  //     (img) => {
+  //       editor.canvas.add(img);
+  //     }
+  //   );
+  // };
+
+  // const onAddImage = (file: File) => {
+  //   console.log("이미지 클릭");
+  //   const reader = new FileReader();
+  //   reader.onload = (event) => {
+  //     const imageDataUrl = event.target!.result as string;
+  //     if (typeof imageDataUrl === "string") {
+  //       fabric.Image.fromURL(imageDataUrl, (img) => {
+  //         if (editor?.canvas) {
+  //           editor.canvas.add(img);
+  //         }
+  //       });
+  //     }
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
+
+
+
+  // const onAddImage = (file: File) => {
+  //   console.log("이미지 클릭");
+  //   const reader = new FileReader();
+  //   reader.onload = (event) => {
+  //     const imageDataUrl = event.target!.result;
+  //     if (typeof imageDataUrl === "string") {
+  //       fabric.Image.fromURL(imageDataUrl, (img) => {
+  //         if (editor?.canvas) {
+  //           editor.canvas.add(img);
+  //         }
+  //       });
+  //     }
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
+
+  // const onAddImage = () => {
+  //   if (uploadedImage) {
+  //     fabric.Image.fromURL(uploadedImage, (img) => {
+  //       if (editor?.canvas) {
+  //         editor.canvas.add(img);
+  //       }
+  //     });
+  //   }
+  // };
+
+  // 캔버스 > 지우기
   const removeSelectedObject = () => {
     editor.canvas.remove(editor.canvas.getActiveObject());
   };
 
+
+
+// 다운로드
+const cardRef = useRef<HTMLImageElement | null>(null);
+const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
+console.log("미리보기", previewCard)
+const onDownloadButton = async () => {
+  const card = cardRef.current;
+  if (!card) {
+    return;
+  }
+  const filter = (node: Node) => {
+    if (node instanceof Element) {
+      return node.tagName !== 'BUTTON';
+    }
+    return true;
+  };
+  try {
+    const dataUrl = await domtoimage.toPng(card, { filter });
+    const img = new Image();
+    img.src = dataUrl;
+    console.log("잘 받아왔자나ㅜㅜㅜ", dataUrl);
+    setPreviewCard(dataUrl)
+    navigate("/preview");
+    // document.body.appendChild(img);
+  } catch (error) {
+    console.error('oops, something went wrong!', error);
+  }
+};
+
+// const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
+// console.log("미리보기 카드", previewCard)
+
+// const handleCompleteButtonClick = async () => {
+//   const makeCardElement = document.getElementById('make-card'); // MakeCard 컴포넌트를 감싸는 최상위 요소의 id를 가져옵니다.
+
+//   if (!makeCardElement) {
+//     return;
+//   }
+
+//   try {
+//     // Create a promise that resolves when all images are loaded
+//     const imagesLoadedPromise = new Promise<void>((resolve, reject) => {
+//       const images = makeCardElement.getElementsByTagName('img');
+//       let loadedCount = 0;
+
+//       for (let i = 0; i < images.length; i++) {
+//         images[i].addEventListener('load', () => {
+//           loadedCount++;
+//           if (loadedCount === images.length) {
+//             resolve();
+//           }
+//         });
+
+//         images[i].addEventListener('error', () => {
+//           reject(new Error('Image loading failed'));
+//         });
+//       }
+//     });
+
+//     // Wait for images to load
+//     await imagesLoadedPromise;
+
+//     // Convert the MakeCard element to a PNG image base64-encoded data URL
+//     const dataUrl = await domtoimage.toPng(makeCardElement);
+
+//     // Now you can use the base64-encoded dataUrl as needed
+//     setPreviewCard(dataUrl);
+//     console.log(dataUrl); // You can remove this line, it's just for demonstration
+//   } catch (error) {
+//     console.error("Error while creating PNG image:", error);
+//   }
+// };
+
   return (
     <StyledMakeUI>
-      <div style={{ width: "360px", height: "360px", position: "relative" }}>
+      <MakeCard ref={cardRef}>
         <Viewer
           src={selectedCharacterItem}
           backgroundhex={hex}
           backgroundimage={uploadedImage}
+          height={"360px"}
         />
         <FabricJSCanvas
           style={{
             width: "360px",
             height: "360px",
-            positon: "fixed",
+            positon: "absolute",
             zIndex: "10",
             top: "46px",
           }}
           className="sample-canvas"
           onReady={onReady}
         />
-      </div>
+      </MakeCard>
       <CompleteButton
         onClick={() => {
-          navigate("/preview");
+          onDownloadButton();
         }}
       >
         <img
@@ -224,14 +367,14 @@ const MakeUI: React.FC = () => {
               >
                 텍스트
               </DecorateToolButton>
-              <DecorateToolButton
+              {/* <DecorateToolButton
                 isSelectedDecorate={selectedDecorateTool === "decorate-image"}
                 onClick={() => {
                   setSelectedDecorateTool("decorate-image");
                 }}
               >
                 사진
-              </DecorateToolButton>
+              </DecorateToolButton> */}
               <DecorateToolButton
                 isSelectedDecorate={selectedDecorateTool === "decorate-shape"}
                 onClick={() => {
@@ -294,12 +437,12 @@ const MakeUI: React.FC = () => {
                   </DecorateTextBox>
                 </DecorateTextContainer>
               )}
-              {selectedDecorateTool === "decorate-image" && (
+              {/* {selectedDecorateTool === "decorate-image" && (
                 <DecorateImageContainer>
                   <DecorateImageBox>
                     <DecorateGuide>원하는 사진을 선택해 주세요</DecorateGuide>
                     <button
-                      onClick={onAddImage}
+                      onClick={() => {onAddImage()}}
                       style={{
                         width: "210px",
                         height: "38px",
@@ -318,7 +461,7 @@ const MakeUI: React.FC = () => {
                     </button>
                   </DecorateImageBox>
                 </DecorateImageContainer>
-              )}
+              )} */}
               {selectedDecorateTool === "decorate-shape" && (
                 <DecorateShapeContainer>
                   <DecorateShapeBox>
@@ -446,6 +589,12 @@ const MakeUI: React.FC = () => {
 const StyledMakeUI = styled.div`
   height: calc(100vh - 110px);
 `;
+
+const MakeCard = styled.div`
+  width: 360px;
+  height: 360px;
+  position: relative;
+`
 
 const Viewer = styled.img<ViewerProps>`
   width: 360px;
@@ -576,7 +725,7 @@ const DecorateTool = styled.div`
 `;
 
 const DecorateToolButton = styled.button<{ isSelectedDecorate: boolean }>`
-  width: 55px;
+  width: 75px;
   height: 29px;
   border-radius: 3px;
   border: ${(props) =>
@@ -647,23 +796,23 @@ const DecorateTextBox = styled.div`
   gap: 5px;
 `;
 
-const DecorateImageContainer = styled.div`
-  height: calc(100vh - 559px);
-  /* background: olive; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+// const DecorateImageContainer = styled.div`
+//   height: calc(100vh - 559px);
+//   /* background: olive; */
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// `;
 
-const DecorateImageBox = styled.div`
-  width: 230px;
-  height: 134px;
-  /* background: red; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
+// const DecorateImageBox = styled.div`
+//   width: 230px;
+//   height: 134px;
+//   /* background: red; */
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+// `;
 
 const DecorateShapeContainer = styled.div`
   height: calc(100vh - 559px);
