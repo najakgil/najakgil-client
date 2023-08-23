@@ -10,7 +10,7 @@ import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
 // import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 // import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
+// import { saveAs } from "file-saver";
 import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
 import domtoimage from 'dom-to-image';
 
@@ -218,22 +218,22 @@ const onCompeleteButton = async () => {
   }
 };
 
-  // 다운로드
-  const onDownloadButton = () => {
-    const card = cardRef.current;
-    if (!card) {
-      return;
-    }
-    const filter = (node: Node) => {
-      if (node instanceof Element) {
-        return node.tagName !== "BUTTON";
-      }
-      return true;
-    };
-    domtoimage.toBlob(card, { filter: filter }).then((blob) => {
-      saveAs(blob, "my-gachon-president.png");
-    });
-  };
+  // // 다운로드
+  // const onDownloadButton = () => {
+  //   const card = cardRef.current;
+  //   if (!card) {
+  //     return;
+  //   }
+  //   const filter = (node: Node) => {
+  //     if (node instanceof Element) {
+  //       return node.tagName !== "BUTTON";
+  //     }
+  //     return true;
+  //   };
+  //   domtoimage.toBlob(card, { filter: filter }).then((blob) => {
+  //     saveAs(blob, "my-gachon-president.png");
+  //   });
+  // };
 
   return (
     <StyledMakeUI>
@@ -270,7 +270,7 @@ const onCompeleteButton = async () => {
         완성하기
       </CompleteButton>
       {/* 임시 다운로드 버튼 */}
-      <TemporaryButton
+      {/* <TemporaryButton
         onClick={() => {
           onDownloadButton();
         }}
@@ -282,7 +282,7 @@ const onCompeleteButton = async () => {
         />
         <br />
         다운로드
-      </TemporaryButton>
+      </TemporaryButton> */}
       <input
         style={{ display: "none" }}
         ref={imageRef}
@@ -574,6 +574,7 @@ const onCompeleteButton = async () => {
 };
 
 const StyledMakeUI = styled.div`
+  width: 360px;
   height: calc(100vh - 110px);
 `;
 
@@ -611,24 +612,24 @@ const CompleteButton = styled.button`
   line-height: 140%; /* 16.8px */
 `;
 
-const TemporaryButton = styled.button`
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  top: 260px;
-  right: 16px;
-  background-color: #AFD8FF;
-  border-radius: 50px;
-  box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
+// const TemporaryButton = styled.button`
+//   position: fixed;
+//   width: 60px;
+//   height: 60px;
+//   top: 260px;
+//   right: 16px;
+//   background-color: #AFD8FF;
+//   border-radius: 50px;
+//   box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
 
-  color: #fff;
-  text-align: center;
-  font-family: Noto Sans;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 16.8px */
-`;
+//   color: #fff;
+//   text-align: center;
+//   font-family: Noto Sans;
+//   font-size: 12px;
+//   font-style: normal;
+//   font-weight: 400;
+//   line-height: 140%; /* 16.8px */
+// `;
 
 const Toolbar = styled.div`
   height: 36px;
