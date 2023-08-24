@@ -16,6 +16,9 @@ const NavBarArticle = styled.article`
   border-radius: 0px;
   padding-top: 10px;
   margin: 0px;
+  position: fixed;
+  bottom:0;
+  background: white;
 `;
 
 const TabMenuUl = styled.ul`
