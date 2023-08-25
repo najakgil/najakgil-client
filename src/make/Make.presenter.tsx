@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil";
 import { CharacterChoiceAtom } from "../recoil/CharacterChoiceAtom";
 import { BackgroundColorChoiceAtom } from "../recoil/BackgroundColorChoiceAtom";
 import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
-// import { fabric } from "fabric";
+import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 // import html2canvas from "html2canvas";
 // import { saveAs } from "file-saver";
@@ -173,15 +173,15 @@ const MakeUI: React.FC = () => {
   //   reader.readAsDataURL(file);
   // };
 
-  // const onAddImage = () => {
-  //   if (uploadedImage) {
-  //     fabric.Image.fromURL(uploadedImage, (img) => {
-  //       if (editor?.canvas) {
-  //         editor.canvas.add(img);
-  //       }
-  //     });
-  //   }
-  // };
+  const onAddImage = () => {
+    if (uploadedImage) {
+      fabric.Image.fromURL(uploadedImage, (img) => {
+        if (editor?.canvas) {
+          editor.canvas.add(img);
+        }
+      });
+    }
+  };
 
   // 캔버스 > 지우기
   const removeSelectedObject = () => {
@@ -218,23 +218,6 @@ const onCompeleteButton = async () => {
   }
 };
 
-  // // 다운로드
-  // const onDownloadButton = () => {
-  //   const card = cardRef.current;
-  //   if (!card) {
-  //     return;
-  //   }
-  //   const filter = (node: Node) => {
-  //     if (node instanceof Element) {
-  //       return node.tagName !== "BUTTON";
-  //     }
-  //     return true;
-  //   };
-  //   domtoimage.toBlob(card, { filter: filter }).then((blob) => {
-  //     saveAs(blob, "my-gachon-president.png");
-  //   });
-  // };
-
   return (
     <StyledMakeUI>
       <div ref={cardRef} style={{width:"360px", height:"360px", position:"relative"}}>
@@ -269,20 +252,6 @@ const onCompeleteButton = async () => {
         <br />
         완성하기
       </CompleteButton>
-      {/* 임시 다운로드 버튼 */}
-      {/* <TemporaryButton
-        onClick={() => {
-          onDownloadButton();
-        }}
-      >
-        <img
-          alt="complete"
-          src="/assets/icon/download.svg"
-          style={{ width: "24px" }}
-        />
-        <br />
-        다운로드
-      </TemporaryButton> */}
       <input
         style={{ display: "none" }}
         ref={imageRef}
@@ -354,14 +323,14 @@ const onCompeleteButton = async () => {
               >
                 텍스트
               </DecorateToolButton>
-              {/* <DecorateToolButton
+              <DecorateToolButton
                 isSelectedDecorate={selectedDecorateTool === "decorate-image"}
                 onClick={() => {
                   setSelectedDecorateTool("decorate-image");
                 }}
               >
                 사진
-              </DecorateToolButton> */}
+              </DecorateToolButton>
               <DecorateToolButton
                 isSelectedDecorate={selectedDecorateTool === "decorate-shape"}
                 onClick={() => {
@@ -424,7 +393,7 @@ const onCompeleteButton = async () => {
                   </DecorateTextBox>
                 </DecorateTextContainer>
               )}
-              {/* {selectedDecorateTool === "decorate-image" && (
+              {selectedDecorateTool === "decorate-image" && (
                 <DecorateImageContainer>
                   <DecorateImageBox>
                     <DecorateGuide>원하는 사진을 선택해 주세요</DecorateGuide>
@@ -448,7 +417,7 @@ const onCompeleteButton = async () => {
                     </button>
                   </DecorateImageBox>
                 </DecorateImageContainer>
-              )} */}
+              )}
               {selectedDecorateTool === "decorate-shape" && (
                 <DecorateShapeContainer>
                   <DecorateShapeBox>
@@ -612,25 +581,6 @@ const CompleteButton = styled.button`
   line-height: 140%; /* 16.8px */
 `;
 
-// const TemporaryButton = styled.button`
-//   position: fixed;
-//   width: 60px;
-//   height: 60px;
-//   top: 260px;
-//   right: 16px;
-//   background-color: #AFD8FF;
-//   border-radius: 50px;
-//   box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
-
-//   color: #fff;
-//   text-align: center;
-//   font-family: Noto Sans;
-//   font-size: 12px;
-//   font-style: normal;
-//   font-weight: 400;
-//   line-height: 140%; /* 16.8px */
-// `;
-
 const Toolbar = styled.div`
   height: 36px;
 `;
@@ -731,7 +681,7 @@ const DecorateTool = styled.div`
 `;
 
 const DecorateToolButton = styled.button<{ isSelectedDecorate: boolean }>`
-  width: 75px;
+  width: 55px;
   height: 29px;
   border-radius: 3px;
   border: ${(props) =>
@@ -802,23 +752,23 @@ const DecorateTextBox = styled.div`
   gap: 5px;
 `;
 
-// const DecorateImageContainer = styled.div`
-//   height: calc(100vh - 559px);
-//   /* background: olive; */
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-// `;
+const DecorateImageContainer = styled.div`
+  height: calc(100vh - 559px);
+  /* background: olive; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
-// const DecorateImageBox = styled.div`
-//   width: 230px;
-//   height: 134px;
-//   /* background: red; */
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// `;
+const DecorateImageBox = styled.div`
+  width: 230px;
+  height: 134px;
+  /* background: red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const DecorateShapeContainer = styled.div`
   height: calc(100vh - 559px);
