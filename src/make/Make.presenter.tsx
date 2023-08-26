@@ -12,7 +12,7 @@ import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 // import html2canvas from "html2canvas";
 // import { saveAs } from "file-saver";
 import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
-import domtoimage from 'dom-to-image';
+import domtoimage from "dom-to-image";
 
 interface ViewerProps {
   src: string;
@@ -155,8 +155,6 @@ const MakeUI: React.FC = () => {
   //   reader.readAsDataURL(file);
   // };
 
-
-
   // const onAddImage = (file: File) => {
   //   console.log("이미지 클릭");
   //   const reader = new FileReader();
@@ -188,39 +186,40 @@ const MakeUI: React.FC = () => {
     editor.canvas.remove(editor.canvas.getActiveObject());
   };
 
-
-
-// 완성하기 버튼
-const cardRef = useRef<HTMLImageElement | null>(null);
-const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
-console.log("미리보기", previewCard)
-const onCompeleteButton = async () => {
-  const card = cardRef.current;
-  if (!card) {
-    return;
-  }
-  const filter = (node: Node) => {
-    if (node instanceof Element) {
-      return node.tagName !== 'BUTTON';
+  // 완성하기 버튼
+  const cardRef = useRef<HTMLImageElement | null>(null);
+  const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
+  console.log("미리보기", previewCard);
+  const onCompeleteButton = async () => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
     }
-    return true;
+    const filter = (node: Node) => {
+      if (node instanceof Element) {
+        return node.tagName !== "BUTTON";
+      }
+      return true;
+    };
+    try {
+      const dataUrl = await domtoimage.toPng(card, { filter });
+      const img = new Image();
+      img.src = dataUrl;
+      console.log("잘 받아왔자나ㅜㅜㅜ", dataUrl);
+      setPreviewCard(dataUrl);
+      navigate("/preview");
+      // document.body.appendChild(img);
+    } catch (error) {
+      console.error("oops, something went wrong!", error);
+    }
   };
-  try {
-    const dataUrl = await domtoimage.toPng(card, { filter });
-    const img = new Image();
-    img.src = dataUrl;
-    console.log("잘 받아왔자나ㅜㅜㅜ", dataUrl);
-    setPreviewCard(dataUrl)
-    navigate("/preview");
-    // document.body.appendChild(img);
-  } catch (error) {
-    console.error('oops, something went wrong!', error);
-  }
-};
 
   return (
     <StyledMakeUI>
-      <div ref={cardRef} style={{width:"360px", height:"360px", position:"relative"}}>
+      <div
+        ref={cardRef}
+        style={{ width: "360px", height: "360px", position: "relative" }}
+      >
         <Viewer
           src={selectedCharacterItem}
           backgroundhex={hex}
@@ -390,6 +389,46 @@ const onCompeleteButton = async () => {
                     >
                       입력
                     </button>
+                    <div>
+                      글꼴 :
+                      <select name="order" form="myForm">
+                        <option value="americano">아메리카노</option>
+                        <option value="caffe latte">카페라테</option>
+                        <option value="cafe au lait">카페오레</option>
+                        <option value="espresso">에스프레소</option>
+                      </select> 
+                    </div>
+                    <div>
+                      글씨 크기        
+                      <input type="range" id="a" name="ages" min="10" max="60" step="10"/>
+                      <output name="x" htmlFor="a"/>
+                    </div>
+                    <div>
+                      글자 색깔
+                      <input type="color" value="#ff0000" />
+                    </div>
+                    <div>
+                      글자 배경색
+                      <input type="color" value="#ff0000" />
+                    </div>
+                    <div>
+                      글씨 외곽선 색상
+                      <input type="color" value="#ff0000" />
+                    </div>
+                    <div>
+                      외곽선 두께       
+                      <input type="range" id="a" name="ages" min="10" max="60" step="10"/>
+                      <output name="x" htmlFor="a"/>
+                    </div>
+                    <div>
+                      정렬
+                      <select name="order" form="myForm">
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                        <option value="justify">Justify</option>
+                      </select> 
+                    </div>
                   </DecorateTextBox>
                 </DecorateTextContainer>
               )}
@@ -398,7 +437,9 @@ const onCompeleteButton = async () => {
                   <DecorateImageBox>
                     <DecorateGuide>원하는 사진을 선택해 주세요</DecorateGuide>
                     <button
-                      onClick={() => {onAddImage()}}
+                      onClick={() => {
+                        onAddImage();
+                      }}
                       style={{
                         width: "210px",
                         height: "38px",
