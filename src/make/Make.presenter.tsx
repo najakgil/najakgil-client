@@ -216,9 +216,8 @@ const MakeUI: React.FC = () => {
 
   return (
     <StyledMakeUI>
-      <div
+      <MakeCard
         ref={cardRef}
-        style={{ width: "360px", height: "360px", position: "relative" }}
       >
         <Viewer
           src={selectedCharacterItem}
@@ -237,7 +236,7 @@ const MakeUI: React.FC = () => {
           className="sample-canvas"
           onReady={onReady}
         />
-      </div>
+      </MakeCard>
       <CompleteButton
         onClick={() => {
           onCompeleteButton();
@@ -588,11 +587,11 @@ const StyledMakeUI = styled.div`
   height: calc(100vh - 110px);
 `;
 
-// const MakeCard = styled.div`
-//   width: 360px;
-//   height: 360px;
-//   position: relative;
-// `
+const MakeCard = styled.div`
+  width: 360px;
+  height: 360px;
+  position: relative;
+`
 
 const Viewer = styled.img<ViewerProps>`
   width: 360px;
