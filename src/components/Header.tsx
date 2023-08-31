@@ -12,19 +12,21 @@ const Header: React.FC = () => {
 };
 
 const StyledHeader = styled.div`
-  width: 360px;
-  height: 45px;
-  /* display: flex;
-  justify-content: flex-start;
-  align-items: center; */
-  padding-left: 16px;
-  border-bottom: 1px solid #f0f0f0;
   position: fixed;
   top: 0;
-  right: 0;
   left: 0;
-  /* margin: auto 0; */
-  background: white;
+  right: 0;
+  margin: 0 auto;
+  min-width: 375px;
+  max-width: 450px;
+  height: 54px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 19px;
+  z-index: 5;
 `;
 
 export default Header;
