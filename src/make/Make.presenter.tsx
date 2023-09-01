@@ -8,11 +8,14 @@ import { CharacterChoiceAtom } from "../recoil/CharacterChoiceAtom";
 import { BackgroundColorChoiceAtom } from "../recoil/BackgroundColorChoiceAtom";
 import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
 import { fabric } from "fabric";
-import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+import { useFabricJSEditor, FabricJSCanvas } from "fabricjs-react";
+
 // import html2canvas from "html2canvas";
 // import { saveAs } from "file-saver";
 import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
 import domtoimage from "dom-to-image";
+import Header from "../components/Header";
+import { StickerItemList } from "./StickerItemList";
 
 interface ViewerProps {
   src: string;
@@ -89,7 +92,6 @@ const MakeUI: React.FC = () => {
   };
 
   // 캔버스
-  const [text, setText] = useState("");
   const { editor, onReady } = useFabricJSEditor();
 
   // 캔버스 > 높이 조절
@@ -100,17 +102,38 @@ const MakeUI: React.FC = () => {
   }, [editor?.canvas]);
 
   // 캔버스 > 도형
-  const onAddCircle = () => {
-    editor?.addCircle();
-  };
-  const onAddRectangle = () => {
-    editor?.addRectangle();
+  // const onAddCircle = () => {
+  //   editor?.addCircle();
+  // };
+  // const onAddRectangle = () => {
+  //   editor?.addRectangle();
+  // };
+
+  // 캔버스 > 스티커
+  // const onAddImage = () => {
+  //   fabric.Image.fromURL(
+  //     "https://www.neopoly.de/stylesheets/logo.jpg",
+  //     (img) => {
+  //       editor.canvas.add(img);
+  //     }
+  //   );
+  // };
+  const onAddImage = () => {
+    fabric.Image.fromURL(
+      "https://i.pinimg.com/564x/f3/99/10/f39910c9987d93c7a4091654b79077a2.jpg",
+      (img) => {
+        editor.canvas.add(img);
+      }
+    );
   };
 
   // 캔버스 > 텍스트
+  const [text, setText] = useState("");
+
   const onAddText = () => {
     editor?.addText(text);
     setText("");
+    editor.setFillColor("rgb(255,255,255)");
   };
 
   // 캔버스 > 펜
@@ -130,6 +153,7 @@ const MakeUI: React.FC = () => {
   //   }
   // };
 
+  // 여기야 여기
   // const onAddImage = () => {
   //   fabric.Image.fromURL(
   //     "https://www.neopoly.de/stylesheets/logo.jpg",
@@ -171,15 +195,15 @@ const MakeUI: React.FC = () => {
   //   reader.readAsDataURL(file);
   // };
 
-  const onAddImage = () => {
-    if (uploadedImage) {
-      fabric.Image.fromURL(uploadedImage, (img) => {
-        if (editor?.canvas) {
-          editor.canvas.add(img);
-        }
-      });
-    }
-  };
+  // const onAddImage = () => {
+  //   if (uploadedImage) {
+  //     fabric.Image.fromURL(uploadedImage, (img) => {
+  //       if (editor?.canvas) {
+  //         editor.canvas.add(img);
+  //       }
+  //     });
+  //   }
+  // };
 
   // 캔버스 > 지우기
   const removeSelectedObject = () => {
@@ -216,9 +240,8 @@ const MakeUI: React.FC = () => {
 
   return (
     <StyledMakeUI>
-      <MakeCard
-        ref={cardRef}
-      >
+      <Header />
+      <MakeCard ref={cardRef}>
         <Viewer
           src={selectedCharacterItem}
           backgroundhex={hex}
@@ -330,12 +353,12 @@ const MakeUI: React.FC = () => {
                 사진
               </DecorateToolButton>
               <DecorateToolButton
-                isSelectedDecorate={selectedDecorateTool === "decorate-shape"}
+                isSelectedDecorate={selectedDecorateTool === "decorate-sticker"}
                 onClick={() => {
-                  setSelectedDecorateTool("decorate-shape");
+                  setSelectedDecorateTool("decorate-sticker");
                 }}
               >
-                도형
+                스티커
               </DecorateToolButton>
               <DecorateToolButton
                 isSelectedDecorate={selectedDecorateTool === "decorate-pen"}
@@ -364,7 +387,7 @@ const MakeUI: React.FC = () => {
                       onChange={(event) => setText(event.target.value)}
                       style={{
                         width: "210px",
-                        height: "38px",
+                        height: "33px",
                         borderRadius: "3px",
                         border: "1px solid #AFD8FF",
                         paddingLeft: "10px",
@@ -374,7 +397,7 @@ const MakeUI: React.FC = () => {
                       onClick={onAddText}
                       style={{
                         width: "210px",
-                        height: "38px",
+                        height: "33px",
                         borderRadius: "3px",
                         background: "#AFD8FF",
                         color: "#FFF",
@@ -384,50 +407,64 @@ const MakeUI: React.FC = () => {
                         fontStyle: "normal",
                         fontWeight: 400,
                         lineHeight: "140%",
+                        marginBottom: "5px",
                       }}
                     >
                       입력
                     </button>
-                    <div>
-                      글꼴 :
-                      <select name="order" form="myForm">
-                        <option value="americano">아메리카노</option>
-                        <option value="caffe latte">카페라테</option>
-                        <option value="cafe au lait">카페오레</option>
-                        <option value="espresso">에스프레소</option>
-                      </select> 
-                    </div>
-                    <div>
-                      글씨 크기        
-                      <input type="range" id="a" name="ages" min="10" max="60" step="10"/>
-                      <output name="x" htmlFor="a"/>
-                    </div>
-                    <div>
-                      글자 색깔
-                      <input type="color" value="#ff0000" />
-                    </div>
-                    <div>
-                      글자 배경색
-                      <input type="color" value="#ff0000" />
-                    </div>
-                    <div>
-                      글씨 외곽선 색상
-                      <input type="color" value="#ff0000" />
-                    </div>
-                    <div>
-                      외곽선 두께       
-                      <input type="range" id="a" name="ages" min="10" max="60" step="10"/>
-                      <output name="x" htmlFor="a"/>
-                    </div>
-                    <div>
-                      정렬
-                      <select name="order" form="myForm">
-                        <option value="left">Left</option>
-                        <option value="center">Center</option>
-                        <option value="right">Right</option>
-                        <option value="justify">Justify</option>
-                      </select> 
-                    </div>
+                    <TextChoiceBox>
+                      <div>
+                        <TextChoiceItem>
+                          <TextChoiceTitle>글꼴</TextChoiceTitle>
+                          <select name="order" form="myForm">
+                            <option value="americano">아메리카노</option>
+                            <option value="caffe latte">카페라테</option>
+                            <option value="cafe au lait">카페오레</option>
+                            <option value="espresso">에스프레소</option>
+                          </select>
+                        </TextChoiceItem>
+                        <TextChoiceItem>
+                          <TextChoiceTitle>글자 색깔</TextChoiceTitle>
+                          <input type="color" value="#ff0000" />
+                        </TextChoiceItem>
+                      </div>
+                      <div>
+                        <TextChoiceItem>
+                          <TextChoiceTitle>글자 배경색</TextChoiceTitle>
+                          <input type="color" value="#ff0000" />
+                        </TextChoiceItem>
+                        <TextChoiceItem>
+                          <TextChoiceTitle>글씨 외곽선 색상</TextChoiceTitle>
+                          <input type="color" value="#ff0000" />
+                        </TextChoiceItem>
+                      </div>
+                      <div>
+                        <TextChoiceItem>
+                          <TextChoiceTitle>글씨 크기</TextChoiceTitle>
+                          <input
+                            type="range"
+                            id="a"
+                            name="ages"
+                            min="10"
+                            max="60"
+                            step="10"
+                          />
+                          <output name="x" htmlFor="a" />
+                        </TextChoiceItem>
+                        <TextChoiceItem>
+                          <TextChoiceTitle>외곽선 두께</TextChoiceTitle>
+                          <input
+                            type="range"
+                            id="a"
+                            name="ages"
+                            min="10"
+                            max="60"
+                            step="10"
+                          />
+                          <output name="x" htmlFor="a" />
+                        </TextChoiceItem>
+                      </div>
+                    </TextChoiceBox>
                   </DecorateTextBox>
                 </DecorateTextContainer>
               )}
@@ -458,62 +495,27 @@ const MakeUI: React.FC = () => {
                   </DecorateImageBox>
                 </DecorateImageContainer>
               )}
-              {selectedDecorateTool === "decorate-shape" && (
-                <DecorateShapeContainer>
-                  <DecorateShapeBox>
-                    <DecorateGuide>원하는 도형을 선택해 주세요</DecorateGuide>
-                    <div style={{ display: "flex", gap: "30px" }}>
-                      <div
-                        onClick={onAddRectangle}
-                        style={{
-                          border: "1px solid #AFD8FF",
-                          background: "#AFD8FF",
-                          width: "80px",
-                          height: "80px",
-                          color: "#FFF",
-                          textAlign: "center",
-                          fontFamily: "Noto Sans",
-                          fontSize: "12px",
-                          fontStyle: "normal",
-                          fontWeight: 700,
-                          lineHeight: "140%",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        네모
-                      </div>
-                      <div
-                        onClick={onAddCircle}
-                        style={{
-                          border: "1px solid #AFD8FF",
-                          borderRadius: "100px",
-                          background: "#AFD8FF",
-                          width: "80px",
-                          height: "80px",
-                          color: "#FFF",
-                          textAlign: "center",
-                          fontFamily: "Noto Sans",
-                          fontSize: "12px",
-                          fontStyle: "normal",
-                          fontWeight: 700,
-                          lineHeight: "140%",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        동그라미
-                      </div>
-                    </div>
-                  </DecorateShapeBox>
-                </DecorateShapeContainer>
+              {selectedDecorateTool === "decorate-sticker" && (
+                <DecorateStickerContainer>
+                  <DecorateStickerBox>
+                    <DecorateGuide>원하는 스티커를 선택해 주세요</DecorateGuide>
+                    <StickerBox>
+                      {StickerItemList.map((item, index) => (
+                        <img
+                          key={index}
+                          onClick={onAddImage}
+                          src={item.src}
+                          style={{ width: "80px" }}
+                        />
+                      ))}
+                    </StickerBox>
+                  </DecorateStickerBox>
+                </DecorateStickerContainer>
               )}
               {selectedDecorateTool === "decorate-pen" && (
                 <DecoratePenContainer>
                   <DecoratePenBox>
-                    <DecorateGuide>원하는 도형을 선택해 주세요</DecorateGuide>
+                    <DecorateGuide>원하는 펜을 선택해 주세요</DecorateGuide>
                     <img onClick={toggleDraw} src="/assets/icon/pen.svg" />
                   </DecoratePenBox>
                 </DecoratePenContainer>
@@ -591,7 +593,8 @@ const MakeCard = styled.div`
   width: 360px;
   height: 360px;
   position: relative;
-`
+  top: 45px;
+`;
 
 const Viewer = styled.img<ViewerProps>`
   width: 360px;
@@ -623,6 +626,9 @@ const CompleteButton = styled.button`
 
 const Toolbar = styled.div`
   height: 36px;
+  position: fixed;
+  top: 406px;
+  background: white;
 `;
 
 const ToolButton = styled.button<{ isselected: boolean }>`
@@ -640,7 +646,9 @@ const ToolButton = styled.button<{ isselected: boolean }>`
 `;
 
 const ToolChoiceBox = styled.div`
-  height: calc(100vh - 506px);
+  height: 243px;
+  position: fixed;
+  top: 442px;
   /* background: yellow; */
 `;
 
@@ -684,9 +692,8 @@ const CharacterToolItem = styled.button<{ isselectedcharacter: boolean }>`
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  line-height: 140%; /* 16.8px */
-  background: ${(props) =>
-    props.isselectedcharacter ? "#2294FF" : "transparent"};
+  line-height: 140%;
+  background: ${(props) => (props.isselectedcharacter ? "#2294FF" : "white")};
 `;
 
 const CharacterItemContainer = styled.div`
@@ -771,7 +778,6 @@ const DecorateGuide = styled.p`
   font-style: normal;
   font-weight: 400;
   line-height: 140%;
-  margin-bottom: 10px;
 `;
 
 const DecorateTextContainer = styled.div`
@@ -783,13 +789,38 @@ const DecorateTextContainer = styled.div`
 `;
 
 const DecorateTextBox = styled.div`
-  width: 230px;
   height: 134px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 5px;
+`;
+
+const TextChoiceTitle = styled.div`
+  color: #afd8ff;
+  text-align: center;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  margin-bottom: 5px;
+`;
+
+const TextChoiceItem = styled.div`
+  width: 100px;
+  height: 50px;
+  /* background: yellow; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TextChoiceBox = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 const DecorateImageContainer = styled.div`
@@ -810,22 +841,29 @@ const DecorateImageBox = styled.div`
   align-items: center;
 `;
 
-const DecorateShapeContainer = styled.div`
+const DecorateStickerContainer = styled.div`
   height: calc(100vh - 559px);
   /* background: olive; */
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 25px;
 `;
 
-const DecorateShapeBox = styled.div`
-  width: 230px;
-  height: 134px;
-  /* background: red; */
+const DecorateStickerBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0 auto;
+`;
+
+const StickerBox = styled.div`
+  width: 100%;
+  padding: 9px 10px 9px 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
 `;
 
 const DecoratePenContainer = styled.div`
