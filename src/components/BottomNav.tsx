@@ -10,14 +10,17 @@ import myImage from "/assets/icon/mypage.svg";
 import mySelectImage from "/assets/icon/mypage-f.svg";
 
 const NavBarArticle = styled.article`
+  z-index: 50;
   width: 360px;
   height: 65px;
   border-top: 1px solid #F0F0F0;
   border-radius: 0px;
   padding-top: 10px;
-  margin: 0px;
+  margin: 0 auto;
   position: fixed;
   bottom:0;
+  right: 0;
+  left: 0;
   background: white;
 `;
 
