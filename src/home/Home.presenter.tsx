@@ -1,7 +1,32 @@
 import styled from "styled-components";
 import { useState } from "react";
+import Header from "../components/Header";
+import BottomNav from "../components/BottomNav";
+import CardItem from "./components/CardItem";
+import { CardItemList } from "./components/CardItemList";
+import { PhotoChart } from "../data/type";
+import { useQuery } from "react-query";
+import { getPhotoChart } from "../api/photoChart";
+// import { postUploadPhoto } from "../api/uploadPhoto";
 
 const HomeUI: React.FC = () => {
+  const { data, isLoading, isError } = useQuery<PhotoChart[]>(
+    "get-photo-chart",
+    () => getPhotoChart(),
+    // () => postUploadPhoto()
+  );
+
+  if (isError) {
+    console.log("Error while get Fortune Data.");
+  }
+  if (isLoading) {
+    console.log("Loading get Fortune Data...");
+  }
+  if (data) {
+    console.log("get fortune success ====> ", data);
+  }
+
+  // 정렬 : 최신순 & 인기순
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedItem, setSelectedItem] = useState("인기순");
   const handleItemClick = (itemText: string) => {
@@ -9,79 +34,71 @@ const HomeUI: React.FC = () => {
   };
 
   return (
-    <StyledHome>
-      <FilterBox>
-        <FilterButton onClick={() => setIsExpanded(!isExpanded)}>
-          {selectedItem}
-          <img alt="toggle" src="/assets/icon/toggle.svg" />
-        </FilterButton>
-        {isExpanded && (
-          <ToggleContainer>
-            <ToggleItem
-              onClick={() => {
-                handleItemClick("인기순");
-                setIsExpanded(false);
-              }}
-            >
-              인기순
-            </ToggleItem>
-            <ToggleItem
-              onClick={() => {
-                handleItemClick("최신순");
-                setIsExpanded(false);
-              }}
-            >
-              최신순
-            </ToggleItem>
-          </ToggleContainer>
-        )}
-      </FilterBox>
-      <CardContainer>
-        {selectedItem === "인기순" && (
-          // <PopularityContainer></PopularityContainer>
-          <TemporaryBox>
-            <img
-              src="/assets/image/temporary.svg"
-              style={{ width: "260px" }}
-            />
-            <TemporaryGuideTitle>
-              아직...! 나작길 서비스는 준비중
-            </TemporaryGuideTitle>
-            <TemporaryGuideSubTitle>
-              우리 애기들 보려고 열심히 준비하고 있어.
-              <br />
-              조금만 더 기다려줘.
-            </TemporaryGuideSubTitle>
-          </TemporaryBox>
-        )}
-        {selectedItem === "최신순" && (
-          // <LatestContainer></LatestContainer>
-          <TemporaryBox>
-            <img
-              src="/assets/image/temporary.svg"
-              style={{ width: "260px" }}
-            />
-            <TemporaryGuideTitle>
-              아직...! 나작길 서비스는 준비중
-            </TemporaryGuideTitle>
-            <TemporaryGuideSubTitle>
-              우리 애기들 보려고 열심히 준비하고 있어.
-              <br />
-              조금만 더 기다려줘.
-            </TemporaryGuideSubTitle>
-          </TemporaryBox>
-        )}
-      </CardContainer>
-    </StyledHome>
+    <>
+      <StyledHome>
+        {/* <div>{imgURL}</div> */}
+        <Header />
+        {/* 정렬 */}
+        <FilterBox>
+          <FilterButton onClick={() => setIsExpanded(!isExpanded)}>
+            {selectedItem}
+            <img alt="toggle" src="/assets/icon/toggle.svg" />
+          </FilterButton>
+          {isExpanded && (
+            <ToggleContainer>
+              <ToggleItem
+                onClick={() => {
+                  handleItemClick("인기순");
+                  setIsExpanded(false);
+                }}
+              >
+                인기순
+              </ToggleItem>
+              <ToggleItem
+                onClick={() => {
+                  handleItemClick("최신순");
+                  setIsExpanded(false);
+                }}
+              >
+                최신순
+              </ToggleItem>
+            </ToggleContainer>
+          )}
+        </FilterBox>
+        {/* 인기순 & 최신순 페이지 */}
+        <CardContainer>
+          {selectedItem === "인기순" && (
+            <PopularityContainer>
+              {CardItemList.map((item, index) => (
+                <CardItem key={index} src={item.src} />
+              ))}
+            </PopularityContainer>
+          )}
+          {selectedItem === "최신순" && (
+            <LatestContainer>최신순</LatestContainer>
+          )}
+        </CardContainer>
+        <BottomNav type={"home"} />
+      </StyledHome>
+    </>
   );
 };
 
 const StyledHome = styled.div`
-  height: calc(100vh - 110px);
+  width: 360px;
+  height: 600px;
+  position: fixed;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  top: 54px;
+  background: red;
 `;
+
+// 정렬
 const FilterBox = styled.div`
+  width: 360px;
   height: 48px;
-  /* background: orange; */
   border-bottom: 8px solid #f0f0f0;
   padding: 6px 0px 6px 11px;
 `;
@@ -102,6 +119,7 @@ const FilterButton = styled.button`
 `;
 
 const ToggleContainer = styled.div`
+  z-index: 20;
   position: fixed;
   width: 68px;
   height: 62px;
@@ -121,48 +139,31 @@ const ToggleItem = styled.div`
   margin: 5px 0px;
 `;
 
+// 인기순 & 최신순 페이지
 const CardContainer = styled.div`
-  height: calc(100vh - 158px);
+  width: 360px;
+  height: 640px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: pink;
+  margin: 0;
 `;
 
-// const PopularityContainer = styled.div`
-//   height: calc(100vh - 158px);
-//   background: green;
-// `;
-
-// const LatestContainer = styled.div`
-//   height: calc(100vh - 158px);
-//   background: blue;
-// `;
-
-// 임시
-const TemporaryBox = styled.div`
-  width: 260px;
-  height: 260px;
-  /* background: orange; */
+const PopularityContainer = styled.div`
+  width: 100%;
+  height: 640px;
+  background: green;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px;
+  gap: 10px;
+  overflow-y: scroll;
 `;
 
-const TemporaryGuideTitle = styled.div`
-  color: #000;
-  text-align: center;
-  font-family: Noto Sans;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 140%;
-  margin-bottom: 5px;
+const LatestContainer = styled.div`
+  height: 640px;
+  background: blue;
 `;
 
-const TemporaryGuideSubTitle = styled.div`
-  color: #000;
-  text-align: center;
-  font-family: Noto Sans;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%;
-`;
 export default HomeUI;
