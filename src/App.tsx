@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route  } from "react-router-dom"
-import Make from "./make/Make.container";
+// import Make from "./make/Make.container";
 // import Header from "./components/Header";
-import Preview from "./preview/Preview.container";
-import Home from "./home/Home.container";
-import Mypage from "./mypage/Mypage.container";
+// import Preview from "./preview/Preview.container";
+// import Home from "./home/Home.container";
+// import Mypage from "./mypage/Mypage.container";
 import ShowPage from "./show/ShowPage";
 
 const App: React.FC = () => {
@@ -11,10 +11,10 @@ const App: React.FC = () => {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<Home/>}/>
+          {/* <Route path="/home" element={<Home/>}/>
           <Route path="/" element={<Make/>}/>
           <Route path="/preview" element={<Preview/>}/>
-          <Route path="/mypage" element={<Mypage/>}/>
+          <Route path="/mypage" element={<Mypage/>}/> */}
           <Route path="/show" element={<ShowPage/>}/>
         </Routes>
       </BrowserRouter>

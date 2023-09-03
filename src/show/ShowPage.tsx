@@ -2,13 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+import domtoimage from "dom-to-image";
+import { saveAs } from "file-saver";
+import { useRef } from "react";
 
 import Header from "../components/Header";
-import NavigationBar from "./components/NavigatorBar";
 import ToolBar from "./components/ToolBar";
 import CharacterPannel from "./components/CharacterPannel";
 import BackgroundPannel from "./components/BackgroundPannel";
-import DecoratePannel from "./components/DecoratePannel";
+// import DecoratePannel from "./components/DecoratePannel";
 
 interface ViewerProps {
   src: string;
@@ -32,21 +34,39 @@ const ShowPage: React.FC = () => {
 
   const { onReady } = useFabricJSEditor();
 
-    // State to track added text
-    const [addedText, setAddedText] = useState("");
-    console.log(addedText)
-
-    // Function to update addedText state
-    const handleAddText = (text: string) => {
-      setAddedText(text);
+  // 다운로드
+  const cardRef = useRef<HTMLImageElement | null>(null);
+  const onDownloadButton = () => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
+    }
+    const filter = (node: Node) => {
+      if (node instanceof Element) {
+        return node.tagName !== "BUTTON";
+      }
+      return true;
     };
-  
+    domtoimage.toBlob(card, { filter: filter }).then((blob) => {
+      saveAs(blob, "my-precious-gil.png");
+    });
+  };
+
+  // State to track added text
+  // const [addedText, setAddedText] = useState("");
+  // console.log(addedText)
+
+  // Function to update addedText state
+  // const handleAddText = (text: string) => {
+  //   setAddedText(text);
+  // };
 
   return (
     <>
       <Header />
       <MakeWrapper>
-        <StyledScreen>
+        {/* 카드 */}
+        <StyledScreen ref={cardRef}>
           <Viewer
             src={selectedCharacterItem}
             backgroundhex={hex}
@@ -64,6 +84,21 @@ const ShowPage: React.FC = () => {
             onReady={onReady}
           />
         </StyledScreen>
+        {/* 다운로드 버튼 */}
+        <CompleteButton
+          onClick={() => {
+            onDownloadButton();
+          }}
+        >
+          <img
+            alt="complete"
+            src="/assets/icon/download.svg"
+            style={{ width: "24px" }}
+          />
+          <br />
+          다운로드
+        </CompleteButton>
+        {/* 기능 */}
         <ToolBar
           setSelectedTool={setSelectedTool}
           selectedTool={selectedTool}
@@ -75,7 +110,7 @@ const ShowPage: React.FC = () => {
           />
         )}
 
-        {selectedTool === "decorate" && <DecoratePannel editor={onReady.editor} onAddText={handleAddText} />}
+        {/* {selectedTool === "decorate" && <DecoratePannel editor={onReady.editor} onAddText={handleAddText} />} */}
 
         {selectedTool === "background" && (
           <BackgroundPannel
@@ -86,7 +121,6 @@ const ShowPage: React.FC = () => {
           />
         )}
       </MakeWrapper>
-      <NavigationBar page="make" />
     </>
   );
 };
@@ -108,7 +142,7 @@ const StyledScreen = styled.div`
   width: 360px;
   height: 360px;
   position: relative;
-  background: pink;
+  /* background: pink; */
 `;
 
 const Viewer = styled.img<ViewerProps>`
@@ -118,6 +152,25 @@ const Viewer = styled.img<ViewerProps>`
   background-image: url(${(props) => props.backgroundimage || "none"});
   background-size: cover;
   position: fixed;
+`;
+
+const CompleteButton = styled.button`
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  top: 330px;
+  right: 16px;
+  background-color: #2294ff;
+  border-radius: 50px;
+  box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
+
+  color: #fff;
+  text-align: center;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%; /* 16.8px */
 `;
 
 // const Pannel = styled.div`
