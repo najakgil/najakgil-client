@@ -15,6 +15,8 @@ import { saveAs } from "file-saver";
 import domtoimage from "dom-to-image";
 import Header from "../components/Header";
 // import { StickerItemList } from "./StickerItemList";
+import ModalOverlay from "./components/ModalOverlay";
+import DeleteModal from "./components/DeleteModal";
 
 interface ViewerProps {
   src: string;
@@ -257,8 +259,27 @@ const MakeUI: React.FC = () => {
   //   }
   // };
 
+  // Delete 모달창 관리
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const showDeleteModalHandler = () => {
+    setShowDeleteModal(true);
+  };
+
+  const hideDeleteModalHandler = () => {
+    setShowDeleteModal(false);
+  };
+
   return (
     <StyledMakeUI>
+      {/* Delete 모달창 */}
+      <ModalOverlay
+        blur
+        onHideModal={hideDeleteModalHandler}
+        show={showDeleteModal}
+      >
+        <DeleteModal onHideModal={hideDeleteModalHandler} />
+      </ModalOverlay>
       <Header />
       <div style={{ marginTop: "45px", overflowY: "scroll" }}>
         <MakeCard ref={cardRef}>
@@ -283,6 +304,7 @@ const MakeUI: React.FC = () => {
         <CompleteButton
           onClick={() => {
             onDownloadButton();
+            showDeleteModalHandler();
           }}
         >
           <img
