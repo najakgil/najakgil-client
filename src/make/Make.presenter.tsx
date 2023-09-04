@@ -2,20 +2,19 @@ import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { CharacterToolItemList } from "./CharacterToolItemList";
 import { Colorful } from "@uiw/react-color";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { CharacterChoiceAtom } from "../recoil/CharacterChoiceAtom";
 import { BackgroundColorChoiceAtom } from "../recoil/BackgroundColorChoiceAtom";
 import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
 import { fabric } from "fabric";
 import { useFabricJSEditor, FabricJSCanvas } from "fabricjs-react";
-
 // import html2canvas from "html2canvas";
-// import { saveAs } from "file-saver";
-import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
+import { saveAs } from "file-saver";
+// import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
 import domtoimage from "dom-to-image";
 import Header from "../components/Header";
-import { StickerItemList } from "./StickerItemList";
+// import { StickerItemList } from "./StickerItemList";
 
 interface ViewerProps {
   src: string;
@@ -25,7 +24,25 @@ interface ViewerProps {
 
 const MakeUI: React.FC = () => {
   const imageRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+
+  // 다운로드
+  const cardRef = useRef<HTMLImageElement | null>(null);
+  const onDownloadButton = () => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
+    }
+    const filter = (node: Node) => {
+      if (node instanceof Element) {
+        return node.tagName !== "BUTTON";
+      }
+      return true;
+    };
+    domtoimage.toBlob(card, { filter: filter }).then((blob) => {
+      saveAs(blob, "my-precious-gil.png");
+    });
+  };
 
   // 캐릭터 & 배경
   const [selectedTool, setSelectedTool] = useState("character");
@@ -98,6 +115,7 @@ const MakeUI: React.FC = () => {
   useEffect(() => {
     if (editor?.canvas) {
       editor.canvas.setHeight(360);
+      editor.canvas.setWidth(360);
     }
   }, [editor?.canvas]);
 
@@ -120,11 +138,12 @@ const MakeUI: React.FC = () => {
   // };
   const onAddImage = () => {
     fabric.Image.fromURL(
-      "https://i.pinimg.com/564x/f3/99/10/f39910c9987d93c7a4091654b79077a2.jpg",
+      "https://www.emojiall.com/images/240/microsoft-teams/1f499.png",
       (img) => {
         editor.canvas.add(img);
       }
     );
+    console.log("ddd");
   };
 
   // 캔버스 > 텍스트
@@ -211,208 +230,213 @@ const MakeUI: React.FC = () => {
   };
 
   // 완성하기 버튼
-  const cardRef = useRef<HTMLImageElement | null>(null);
-  const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
-  console.log("미리보기", previewCard);
-  const onCompeleteButton = async () => {
-    const card = cardRef.current;
-    if (!card) {
-      return;
-    }
-    const filter = (node: Node) => {
-      if (node instanceof Element) {
-        return node.tagName !== "BUTTON";
-      }
-      return true;
-    };
-    try {
-      const dataUrl = await domtoimage.toPng(card, { filter });
-      const img = new Image();
-      img.src = dataUrl;
-      console.log("잘 받아왔자나ㅜㅜㅜ", dataUrl);
-      setPreviewCard(dataUrl);
-      navigate("/preview");
-      // document.body.appendChild(img);
-    } catch (error) {
-      console.error("oops, something went wrong!", error);
-    }
-  };
+  // const cardRef = useRef<HTMLImageElement | null>(null);
+  // const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
+  // console.log("미리보기", previewCard);
+  // const onCompeleteButton = async () => {
+  //   const card = cardRef.current;
+  //   if (!card) {
+  //     return;
+  //   }
+  //   const filter = (node: Node) => {
+  //     if (node instanceof Element) {
+  //       return node.tagName !== "BUTTON";
+  //     }
+  //     return true;
+  //   };
+  //   try {
+  //     const dataUrl = await domtoimage.toPng(card, { filter });
+  //     const img = new Image();
+  //     img.src = dataUrl;
+  //     console.log("잘 받아왔자나ㅜㅜㅜ", dataUrl);
+  //     setPreviewCard(dataUrl);
+  //     navigate("/preview");
+  //     // document.body.appendChild(img);
+  //   } catch (error) {
+  //     console.error("oops, something went wrong!", error);
+  //   }
+  // };
 
   return (
     <StyledMakeUI>
       <Header />
-      <MakeCard ref={cardRef}>
-        <Viewer
-          src={selectedCharacterItem}
-          backgroundhex={hex}
-          backgroundimage={uploadedImage}
-          height={"360px"}
-        />
-        <FabricJSCanvas
-          style={{
-            width: "360px",
-            height: "360px",
-            positon: "absolute",
-            zIndex: "10",
-            top: "46px",
+      <div style={{marginTop:'45px'}}>
+        <MakeCard ref={cardRef}>
+          <Viewer
+            src={selectedCharacterItem}
+            backgroundhex={hex}
+            backgroundimage={uploadedImage}
+            height={"360px"}
+          />
+          <FabricJSCanvas
+            style={{
+              width: "360px",
+              height: "360px",
+              positon: "absolute",
+              zIndex: "10",
+              top: "46px",
+            }}
+            className="sample-canvas"
+            onReady={onReady}
+          />
+        </MakeCard>
+        <CompleteButton
+          onClick={() => {
+            onDownloadButton();
           }}
-          className="sample-canvas"
-          onReady={onReady}
+        >
+          <img
+            alt="complete"
+            src="/assets/icon/download.svg"
+            style={{ width: "24px" }}
+          />
+          <br />
+          다운로드
+        </CompleteButton>
+        <input
+          style={{ display: "none" }}
+          ref={imageRef}
+          type="file"
+          accept="image/*"
+          onChange={handleChange}
         />
-      </MakeCard>
-      <CompleteButton
-        onClick={() => {
-          onCompeleteButton();
-        }}
-      >
-        <img
-          alt="complete"
-          src="/assets/icon/complete.svg"
-          style={{ width: "24px" }}
-        />
-        <br />
-        완성하기
-      </CompleteButton>
-      <input
-        style={{ display: "none" }}
-        ref={imageRef}
-        type="file"
-        accept="image/*"
-        onChange={handleChange}
-      />
-      {/* 총장님 캐릭터 보이는 화면 */}
-      <Toolbar>
-        <ToolButton
-          isselected={selectedTool === "character"}
-          onClick={() => setSelectedTool("character")}
-        >
-          캐릭터
-        </ToolButton>
-        <ToolButton
-          isselected={selectedTool === "decorate"}
-          onClick={() => setSelectedTool("decorate")}
-        >
-          꾸미기
-        </ToolButton>
-        <ToolButton
-          isselected={selectedTool === "background"}
-          onClick={() => setSelectedTool("background")}
-        >
-          배경
-        </ToolButton>
-      </Toolbar>
-      <ToolChoiceBox>
-        {/* character */}
-        {selectedTool === "character" && (
-          <CharacterBox>
-            <ToolBox>
-              {CharacterToolItemList.map((item, index) => (
-                <CharacterToolItem
-                  key={index}
-                  isselectedcharacter={selectedCharacterTool === item}
+        {/* 총장님 캐릭터 보이는 화면 */}
+        <Toolbar>
+          <ToolButton
+            isselected={selectedTool === "character"}
+            onClick={() => setSelectedTool("character")}
+          >
+            캐릭터
+          </ToolButton>
+          <ToolButton
+            isselected={selectedTool === "decorate"}
+            onClick={() => setSelectedTool("decorate")}
+          >
+            꾸미기
+          </ToolButton>
+          <ToolButton
+            isselected={selectedTool === "background"}
+            onClick={() => setSelectedTool("background")}
+          >
+            배경
+          </ToolButton>
+        </Toolbar>
+        <ToolChoiceBox>
+          {/* character */}
+          {selectedTool === "character" && (
+            <CharacterBox>
+              <ToolBox>
+                {CharacterToolItemList.map((item, index) => (
+                  <CharacterToolItem
+                    key={index}
+                    isselectedcharacter={selectedCharacterTool === item}
+                    onClick={() => {
+                      setSelectedCharacterTool(item);
+                    }}
+                  >
+                    {item.name}
+                  </CharacterToolItem>
+                ))}
+              </ToolBox>
+              <CharacterItemContainer>
+                {selectedCharacterTool.decorateitemlist.map((src, index) => (
+                  <CharacterItem
+                    key={index}
+                    src={src}
+                    onClick={() => {
+                      setSelectedCharacterItem(src);
+                    }}
+                    isselecteditem={selectedCharacterItem === src}
+                  />
+                ))}
+              </CharacterItemContainer>
+            </CharacterBox>
+          )}
+          {/* decorate */}
+          {selectedTool === "decorate" && (
+            <DecorateBox>
+              <DecorateTool>
+                <DecorateToolButton
+                  isSelectedDecorate={selectedDecorateTool === "decorate-text"}
                   onClick={() => {
-                    setSelectedCharacterTool(item);
+                    setSelectedDecorateTool("decorate-text");
                   }}
                 >
-                  {item.name}
-                </CharacterToolItem>
-              ))}
-            </ToolBox>
-            <CharacterItemContainer>
-              {selectedCharacterTool.decorateitemlist.map((src, index) => (
-                <CharacterItem
-                  key={index}
-                  src={src}
-                  onClick={() => {
-                    setSelectedCharacterItem(src);
-                  }}
-                  isselecteditem={selectedCharacterItem === src}
-                />
-              ))}
-            </CharacterItemContainer>
-          </CharacterBox>
-        )}
-        {/* decorate */}
-        {selectedTool === "decorate" && (
-          <DecorateBox>
-            <DecorateTool>
-              <DecorateToolButton
-                isSelectedDecorate={selectedDecorateTool === "decorate-text"}
-                onClick={() => {
-                  setSelectedDecorateTool("decorate-text");
-                }}
-              >
-                텍스트
-              </DecorateToolButton>
-              <DecorateToolButton
+                  텍스트
+                </DecorateToolButton>
+                {/* <DecorateToolButton
                 isSelectedDecorate={selectedDecorateTool === "decorate-image"}
                 onClick={() => {
                   setSelectedDecorateTool("decorate-image");
                 }}
               >
                 사진
-              </DecorateToolButton>
-              <DecorateToolButton
-                isSelectedDecorate={selectedDecorateTool === "decorate-sticker"}
-                onClick={() => {
-                  setSelectedDecorateTool("decorate-sticker");
-                }}
-              >
-                스티커
-              </DecorateToolButton>
-              <DecorateToolButton
-                isSelectedDecorate={selectedDecorateTool === "decorate-pen"}
-                onClick={() => {
-                  setSelectedDecorateTool("decorate-pen");
-                }}
-              >
-                펜
-              </DecorateToolButton>
-              <DecorateDeleteButton onClick={removeSelectedObject}>
-                지우기
-              </DecorateDeleteButton>
-              <DecorateClearButton onClick={clear}>
-                <img alt="clear" src="/assets/icon/clear.svg" />
-              </DecorateClearButton>
-            </DecorateTool>
-            <DecorateContainer>
-              {selectedDecorateTool === "decorate-text" && (
-                <DecorateTextContainer>
-                  <DecorateTextBox>
-                    <DecorateGuide>원하는 텍스트를 입력해 주세요</DecorateGuide>
-                    <input
-                      name="text"
-                      type="text"
-                      value={text}
-                      onChange={(event) => setText(event.target.value)}
-                      style={{
-                        width: "210px",
-                        height: "33px",
-                        borderRadius: "3px",
-                        border: "1px solid #AFD8FF",
-                        paddingLeft: "10px",
-                      }}
-                    />
-                    <button
-                      onClick={onAddText}
-                      style={{
-                        width: "210px",
-                        height: "33px",
-                        borderRadius: "3px",
-                        background: "#AFD8FF",
-                        color: "#FFF",
-                        textAlign: "center",
-                        fontFamily: "Noto Sans",
-                        fontSize: "18px",
-                        fontStyle: "normal",
-                        fontWeight: 400,
-                        lineHeight: "140%",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      입력
-                    </button>
-                    <TextChoiceBox>
+              </DecorateToolButton> */}
+                <DecorateToolButton
+                  isSelectedDecorate={
+                    selectedDecorateTool === "decorate-sticker"
+                  }
+                  onClick={() => {
+                    setSelectedDecorateTool("decorate-sticker");
+                  }}
+                >
+                  하트
+                </DecorateToolButton>
+                <DecorateToolButton
+                  isSelectedDecorate={selectedDecorateTool === "decorate-pen"}
+                  onClick={() => {
+                    setSelectedDecorateTool("decorate-pen");
+                  }}
+                >
+                  펜
+                </DecorateToolButton>
+                <DecorateDeleteButton onClick={removeSelectedObject}>
+                  지우기
+                </DecorateDeleteButton>
+                <DecorateClearButton onClick={clear}>
+                  <img alt="clear" src="/assets/icon/clear.svg" />
+                </DecorateClearButton>
+              </DecorateTool>
+              <DecorateContainer>
+                {selectedDecorateTool === "decorate-text" && (
+                  <DecorateTextContainer>
+                    <DecorateTextBox>
+                      <DecorateGuide>
+                        원하는 텍스트를 입력해 주세요
+                      </DecorateGuide>
+                      <input
+                        name="text"
+                        type="text"
+                        value={text}
+                        onChange={(event) => setText(event.target.value)}
+                        style={{
+                          width: "210px",
+                          height: "33px",
+                          borderRadius: "3px",
+                          border: "1px solid #AFD8FF",
+                          paddingLeft: "10px",
+                        }}
+                      />
+                      <button
+                        onClick={onAddText}
+                        style={{
+                          width: "210px",
+                          height: "33px",
+                          borderRadius: "3px",
+                          background: "#AFD8FF",
+                          color: "#FFF",
+                          textAlign: "center",
+                          fontFamily: "Noto Sans",
+                          fontSize: "18px",
+                          fontStyle: "normal",
+                          fontWeight: 400,
+                          lineHeight: "140%",
+                          marginBottom: "5px",
+                        }}
+                      >
+                        입력
+                      </button>
+                      {/* <TextChoiceBox>
                       <div>
                         <TextChoiceItem>
                           <TextChoiceTitle>글꼴</TextChoiceTitle>
@@ -464,122 +488,132 @@ const MakeUI: React.FC = () => {
                           <output name="x" htmlFor="a" />
                         </TextChoiceItem>
                       </div>
-                    </TextChoiceBox>
-                  </DecorateTextBox>
-                </DecorateTextContainer>
-              )}
-              {selectedDecorateTool === "decorate-image" && (
-                <DecorateImageContainer>
-                  <DecorateImageBox>
-                    <DecorateGuide>원하는 사진을 선택해 주세요</DecorateGuide>
-                    <button
-                      onClick={() => {
-                        onAddImage();
-                      }}
-                      style={{
-                        width: "210px",
-                        height: "38px",
-                        borderRadius: "3px",
-                        background: "#AFD8FF",
-                        color: "#FFF",
-                        textAlign: "center",
-                        fontFamily: "Noto Sans",
-                        fontSize: "18px",
-                        fontStyle: "normal",
-                        fontWeight: 400,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      사진 선택하기
-                    </button>
-                  </DecorateImageBox>
-                </DecorateImageContainer>
-              )}
-              {selectedDecorateTool === "decorate-sticker" && (
-                <DecorateStickerContainer>
-                  <DecorateStickerBox>
-                    <DecorateGuide>원하는 스티커를 선택해 주세요</DecorateGuide>
-                    <StickerBox>
-                      {StickerItemList.map((item, index) => (
+                    </TextChoiceBox> */}
+                    </DecorateTextBox>
+                  </DecorateTextContainer>
+                )}
+                {selectedDecorateTool === "decorate-image" && (
+                  <DecorateImageContainer>
+                    <DecorateImageBox>
+                      <DecorateGuide>원하는 사진을 선택해 주세요</DecorateGuide>
+                      <button
+                        onClick={() => {
+                          onAddImage();
+                        }}
+                        style={{
+                          width: "210px",
+                          height: "38px",
+                          borderRadius: "3px",
+                          background: "#AFD8FF",
+                          color: "#FFF",
+                          textAlign: "center",
+                          fontFamily: "Noto Sans",
+                          fontSize: "18px",
+                          fontStyle: "normal",
+                          fontWeight: 400,
+                          lineHeight: "140%",
+                        }}
+                      >
+                        사진 선택하기
+                      </button>
+                    </DecorateImageBox>
+                  </DecorateImageContainer>
+                )}
+                {selectedDecorateTool === "decorate-sticker" && (
+                  <DecorateStickerContainer>
+                    <DecorateStickerBox>
+                      <DecorateGuide>
+                        원하는 스티커를 선택해 주세요
+                      </DecorateGuide>
+                      <StickerBox>
+                        {/* {StickerItemList.map((item, index) => (
                         <img
                           key={index}
                           onClick={onAddImage}
                           src={item.src}
                           style={{ width: "80px" }}
                         />
-                      ))}
-                    </StickerBox>
-                  </DecorateStickerBox>
-                </DecorateStickerContainer>
-              )}
-              {selectedDecorateTool === "decorate-pen" && (
-                <DecoratePenContainer>
-                  <DecoratePenBox>
-                    <DecorateGuide>원하는 펜을 선택해 주세요</DecorateGuide>
-                    <img onClick={toggleDraw} src="/assets/icon/pen.svg" />
-                  </DecoratePenBox>
-                </DecoratePenContainer>
-              )}
-            </DecorateContainer>
-          </DecorateBox>
-        )}
-        {/* background */}
-        {selectedTool === "background" && (
-          <BackgroundBox>
-            <BackgroundTool>
-              <BackgroundToolButton
-                isSelectedBackground={
-                  selectedBackgroundTool === "background-color"
-                }
-                onClick={() => {
-                  setSelectedBackgroundTool("background-color");
-                }}
-              >
-                배경색
-              </BackgroundToolButton>
-              <BackgroundToolButton
-                isSelectedBackground={
-                  selectedBackgroundTool === "background-image"
-                }
-                onClick={() => {
-                  setSelectedBackgroundTool("background-image");
-                }}
-              >
-                배경 이미지
-              </BackgroundToolButton>
-            </BackgroundTool>
-            <BackgroundContainer>
-              {selectedBackgroundTool === "background-color" && (
-                <BackgroundColorContainer>
-                  <Colorful
-                    color={hex}
-                    onChange={(color) => {
-                      setHex(color.hex);
-                    }}
-                  />
-                </BackgroundColorContainer>
-              )}
-              {selectedBackgroundTool === "background-image" && (
-                <BackgroundImageContainer>
-                  <UploadRemoveButton onClick={handleUploadRemoveClick}>
-                    {upload === true ? (
-                      <>
-                        <img alt="upload" src="/assets/icon/upload.svg" />
-                        <p>배경 이미지 업로드하기</p>
-                      </>
-                    ) : (
-                      <>
-                        <img alt="remove" src="/assets/icon/remove.svg" />
-                        <p>배경 이미지 제거하기</p>
-                      </>
-                    )}
-                  </UploadRemoveButton>
-                </BackgroundImageContainer>
-              )}
-            </BackgroundContainer>
-          </BackgroundBox>
-        )}
-      </ToolChoiceBox>
+                      ))} */}
+                        <img
+                          src="/assets/icon/heart.svg"
+                          onClick={() => {
+                            onAddImage();
+                          }}
+                          style={{ width: "80px" }}
+                        />
+                      </StickerBox>
+                    </DecorateStickerBox>
+                  </DecorateStickerContainer>
+                )}
+                {selectedDecorateTool === "decorate-pen" && (
+                  <DecoratePenContainer>
+                    <DecoratePenBox>
+                      <DecorateGuide>원하는 펜을 선택해 주세요</DecorateGuide>
+                      <img onClick={toggleDraw} src="/assets/icon/pen.svg" />
+                    </DecoratePenBox>
+                  </DecoratePenContainer>
+                )}
+              </DecorateContainer>
+            </DecorateBox>
+          )}
+          {/* background */}
+          {selectedTool === "background" && (
+            <BackgroundBox>
+              <BackgroundTool>
+                <BackgroundToolButton
+                  isSelectedBackground={
+                    selectedBackgroundTool === "background-color"
+                  }
+                  onClick={() => {
+                    setSelectedBackgroundTool("background-color");
+                  }}
+                >
+                  배경색
+                </BackgroundToolButton>
+                <BackgroundToolButton
+                  isSelectedBackground={
+                    selectedBackgroundTool === "background-image"
+                  }
+                  onClick={() => {
+                    setSelectedBackgroundTool("background-image");
+                  }}
+                >
+                  배경 이미지
+                </BackgroundToolButton>
+              </BackgroundTool>
+              <BackgroundContainer>
+                {selectedBackgroundTool === "background-color" && (
+                  <BackgroundColorContainer>
+                    <Colorful
+                      color={hex}
+                      onChange={(color) => {
+                        setHex(color.hex);
+                      }}
+                    />
+                  </BackgroundColorContainer>
+                )}
+                {selectedBackgroundTool === "background-image" && (
+                  <BackgroundImageContainer>
+                    <UploadRemoveButton onClick={handleUploadRemoveClick}>
+                      {upload === true ? (
+                        <>
+                          <img alt="upload" src="/assets/icon/upload.svg" />
+                          <p>배경 이미지 업로드하기</p>
+                        </>
+                      ) : (
+                        <>
+                          <img alt="remove" src="/assets/icon/remove.svg" />
+                          <p>배경 이미지 제거하기</p>
+                        </>
+                      )}
+                    </UploadRemoveButton>
+                  </BackgroundImageContainer>
+                )}
+              </BackgroundContainer>
+            </BackgroundBox>
+          )}
+        </ToolChoiceBox>
+      </div>
     </StyledMakeUI>
   );
 };
@@ -591,9 +625,8 @@ const StyledMakeUI = styled.div`
 
 const MakeCard = styled.div`
   width: 360px;
-  height: 360px;
-  position: relative;
-  top: 45px;
+  height: 400px;
+  /* position: relative; */
 `;
 
 const Viewer = styled.img<ViewerProps>`
@@ -728,7 +761,7 @@ const DecorateTool = styled.div`
 `;
 
 const DecorateToolButton = styled.button<{ isSelectedDecorate: boolean }>`
-  width: 55px;
+  width: 75px;
   height: 29px;
   border-radius: 3px;
   border: ${(props) =>
@@ -797,31 +830,31 @@ const DecorateTextBox = styled.div`
   gap: 5px;
 `;
 
-const TextChoiceTitle = styled.div`
-  color: #afd8ff;
-  text-align: center;
-  font-family: Noto Sans;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%;
-  margin-bottom: 5px;
-`;
+// const TextChoiceTitle = styled.div`
+//   color: #afd8ff;
+//   text-align: center;
+//   font-family: Noto Sans;
+//   font-size: 12px;
+//   font-style: normal;
+//   font-weight: 400;
+//   line-height: 140%;
+//   margin-bottom: 5px;
+// `;
 
-const TextChoiceItem = styled.div`
-  width: 100px;
-  height: 50px;
-  /* background: yellow; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
+// const TextChoiceItem = styled.div`
+//   width: 100px;
+//   height: 50px;
+//   /* background: yellow; */
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+// `;
 
-const TextChoiceBox = styled.div`
-  display: flex;
-  gap: 10px;
-`;
+// const TextChoiceBox = styled.div`
+//   display: flex;
+//   gap: 10px;
+// `;
 
 const DecorateImageContainer = styled.div`
   height: calc(100vh - 559px);
@@ -864,6 +897,9 @@ const StickerBox = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const DecoratePenContainer = styled.div`

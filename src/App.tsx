@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route  } from "react-router-dom"
 // import Home from "./home/Home.container";
 // import Mypage from "./mypage/Mypage.container";
 import ShowPage from "./show/ShowPage";
+import Make from "./make/Make.container";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Make/>}/>
           <Route path="/preview" element={<Preview/>}/>
           <Route path="/mypage" element={<Mypage/>}/> */}
+          <Route path="/" element={<Make/>}/>
           <Route path="/show" element={<ShowPage/>}/>
         </Routes>
       </BrowserRouter>

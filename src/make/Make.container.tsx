@@ -1,12 +1,12 @@
 import React from "react";
 import MakeUI from "./Make.presenter"
-import BottomNav from "../components/BottomNav";
+// import BottomNav from "../components/BottomNav";
 
 const Make: React.FC = () => {
     return (
         <>
             <MakeUI/>
-            <BottomNav type={"make"}/>
+            {/* <BottomNav type={"make"}/> */}
         </>
     );
 };
