@@ -679,7 +679,7 @@ const ToolButton = styled.button<{ isselected: boolean }>`
 `;
 
 const ToolChoiceBox = styled.div`
-  height: 243px;
+  height: 309px;
   position: fixed;
   top: 442px;
   /* background: yellow; */
