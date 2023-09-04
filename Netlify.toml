@@ -1,0 +1,7 @@
+[build]
+command = "npm run build" # 빌드 스크립트 설정
+
+[[headers]]
+for = "/*" # 모든 경로에 대한 헤더 설정
+  [headers.values]
+  Access-Control-Allow-Origin = "*" # 모든 도메인에서 접근 허용 (*)
