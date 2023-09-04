@@ -260,7 +260,7 @@ const MakeUI: React.FC = () => {
   return (
     <StyledMakeUI>
       <Header />
-      <div style={{marginTop:'45px', overflowY: 'scroll'}}>
+      <div style={{ marginTop: "45px", overflowY: "scroll" }}>
         <MakeCard ref={cardRef}>
           <Viewer
             src={selectedCharacterItem}
@@ -686,18 +686,16 @@ const ToolChoiceBox = styled.div`
 `;
 
 const CharacterBox = styled.div`
-  height: calc(100vh - 506px);
+  height: 309px;
   /* background: green; */
 `;
 
 const DecorateBox = styled.div`
-  height: calc(100vh - 506px);
-  /* background: #f5d442; */
+  height: 309px; /* background: #f5d442; */
 `;
 
 const BackgroundBox = styled.div`
-  height: calc(100vh - 510px);
-  /* background: purple; */
+  height: 309px; /* background: purple; */
 `;
 
 // character
