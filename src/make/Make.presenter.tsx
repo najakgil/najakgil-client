@@ -260,7 +260,7 @@ const MakeUI: React.FC = () => {
   return (
     <StyledMakeUI>
       <Header />
-      <div style={{marginTop:'45px'}}>
+      <div style={{marginTop:'45px', overflowY: 'scroll'}}>
         <MakeCard ref={cardRef}>
           <Viewer
             src={selectedCharacterItem}
@@ -620,7 +620,7 @@ const MakeUI: React.FC = () => {
 
 const StyledMakeUI = styled.div`
   width: 360px;
-  height: calc(100vh - 110px);
+  /* height: calc(100vh - 110px); */
 `;
 
 const MakeCard = styled.div`
