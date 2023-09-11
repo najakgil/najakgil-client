@@ -199,6 +199,7 @@ import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
 import domtoimage from "dom-to-image";
 import { saveAs } from "file-saver";
 import { useRef } from "react";
+import Header from "../components/Header";
 
 // interface PreviewViewerProps {
 //   src: string;
@@ -223,68 +224,82 @@ const PreviewUI: React.FC = () => {
       }
       return true;
     };
-    domtoimage.toBlob(card, { filter: filter }).then((blob) => {
-      saveAs(blob, "my-gachon-president.png");
-    });
+    domtoimage
+      .toBlob(card, {
+        filter: filter,
+        width: card.clientWidth * 5,
+        height: card.clientHeight * 5,
+        style: {
+          transform: "scale(2)",
+          "transform-origin": "50% 50%",
+        },
+      })
+      .then((blob) => {
+        saveAs(blob, "my-gachon-president.png");
+      });
   };
 
   return (
     <StyledPreview>
-      <img
-        src={previewCard}
-        ref={cardRef}
-        style={{ width: "360px", height: "360px", objectFit: "scale-down" }}
-      />
-      <PreviewBox>
-        <PrevButton
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          <img alt="prev-button" src="/assets/icon/prev-button.svg" />
-          수정하기
-        </PrevButton>
-        <PreviewGuideBox>
-          <PreviewGuide>
-            <p
-              style={{
-                color: "#000",
-                textAlign: "center",
-                fontFamily: "Noto Sans",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 700,
-                lineHeight: "140%",
-              }}
-            >
-              나만의 총장님을 완성했어요!
-            </p>
-            <p
-              style={{
-                color: "#000",
-                textAlign: "center",
-                fontFamily: "Noto Sans",
-                fontSize: "14px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "140%",
-              }}
-            >
-              이제 나만의 총장님을 소장해 보세요
-            </p>
-          </PreviewGuide>
-          <PreviewGuideButtonContainer>
-            <BoastButton>자랑하기</BoastButton>
-            <DownloadButton
-              onClick={() => {
-                onDownloadButton();
-              }}
-            >
-              저장하기
-            </DownloadButton>
-          </PreviewGuideButtonContainer>
-        </PreviewGuideBox>
-      </PreviewBox>
+      <Header />
+      <div style={{ marginTop: "45px" }}>
+        <img
+          src={previewCard}
+          ref={cardRef}
+          // style={{ width: "360px", height: "454px", objectFit: "scale-down" }}
+          style={{ width: "360px", height: "360px", objectFit: "scale-down" }}
+        />
+        <PreviewBox>
+          <PrevButton
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            <img alt="prev-button" src="/assets/icon/prev-button.svg" />
+            수정하기
+          </PrevButton>
+          <PreviewGuideBox>
+            <PreviewGuide>
+              <p
+                style={{
+                  color: "#000",
+                  textAlign: "center",
+                  fontFamily: "Noto Sans",
+                  fontSize: "16px",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                }}
+              >
+                나만의 총장님을 완성했어요!
+              </p>
+              <p
+                style={{
+                  color: "#000",
+                  textAlign: "center",
+                  fontFamily: "Noto Sans",
+                  fontSize: "14px",
+                  fontStyle: "normal",
+                  fontWeight: 400,
+                  lineHeight: "140%",
+                }}
+              >
+                이제 나만의 총장님을 소장해 보세요
+              </p>
+            </PreviewGuide>
+            <PreviewGuideButtonContainer>
+              <BoastButton>자랑하기</BoastButton>
+              <DownloadButton
+                onClick={() => {
+                  onDownloadButton();
+                }}
+              >
+                저장하기
+              </DownloadButton>
+            </PreviewGuideButtonContainer>
+          </PreviewGuideBox>
+        </PreviewBox>
+      </div>
     </StyledPreview>
   );
 };
