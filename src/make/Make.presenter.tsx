@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { CharacterToolItemList } from "./CharacterToolItemList";
 import { Colorful } from "@uiw/react-color";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { CharacterChoiceAtom } from "../recoil/CharacterChoiceAtom";
 import { BackgroundColorChoiceAtom } from "../recoil/BackgroundColorChoiceAtom";
@@ -10,13 +10,13 @@ import { BackgroundImageChoiceAtom } from "../recoil/BackgroundImageChoiceAtom";
 import { fabric } from "fabric";
 import { useFabricJSEditor, FabricJSCanvas } from "fabricjs-react";
 // import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
-// import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
+// import { saveAs } from "file-saver";
+import { PreviewCardAtom } from "../recoil/PreviewCardAtom";
 import domtoimage from "dom-to-image";
 import Header from "../components/Header";
 // import { StickerItemList } from "./StickerItemList";
-import ModalOverlay from "./components/ModalOverlay";
-import DeleteModal from "./components/DeleteModal";
+// import ModalOverlay from "./components/ModalOverlay";
+// import DeleteModal from "./components/DeleteModal";
 
 interface ViewerProps {
   src: string;
@@ -26,25 +26,25 @@ interface ViewerProps {
 
 const MakeUI: React.FC = () => {
   const imageRef = useRef<HTMLInputElement>(null);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // 다운로드
-  const cardRef = useRef<HTMLImageElement | null>(null);
-  const onDownloadButton = () => {
-    const card = cardRef.current;
-    if (!card) {
-      return;
-    }
-    const filter = (node: Node) => {
-      if (node instanceof Element) {
-        return node.tagName !== "BUTTON";
-      }
-      return true;
-    };
-    domtoimage.toBlob(card, { filter: filter }).then((blob) => {
-      saveAs(blob, "my-precious-gil.png");
-    });
-  };
+  // const cardRef = useRef<HTMLImageElement | null>(null);
+  // const onDownloadButton = () => {
+  //   const card = cardRef.current;
+  //   if (!card) {
+  //     return;
+  //   }
+  //   const filter = (node: Node) => {
+  //     if (node instanceof Element) {
+  //       return node.tagName !== "BUTTON";
+  //     }
+  //     return true;
+  //   };
+  //   domtoimage.toBlob(card, { filter: filter }).then((blob) => {
+  //     saveAs(blob, "my-precious-gil.png");
+  //   });
+  // };
 
   // 캐릭터 & 배경
   const [selectedTool, setSelectedTool] = useState("character");
@@ -138,6 +138,7 @@ const MakeUI: React.FC = () => {
   //     }
   //   );
   // };
+
   const onAddImage = () => {
     fabric.Image.fromURL(
       "https://www.emojiall.com/images/240/microsoft-teams/1f499.png",
@@ -232,56 +233,54 @@ const MakeUI: React.FC = () => {
   };
 
   // 완성하기 버튼
-  // const cardRef = useRef<HTMLImageElement | null>(null);
-  // const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
-  // console.log("미리보기", previewCard);
-  // const onCompeleteButton = async () => {
-  //   const card = cardRef.current;
-  //   if (!card) {
-  //     return;
-  //   }
-  //   const filter = (node: Node) => {
-  //     if (node instanceof Element) {
-  //       return node.tagName !== "BUTTON";
-  //     }
-  //     return true;
-  //   };
-  //   try {
-  //     const dataUrl = await domtoimage.toPng(card, { filter });
-  //     const img = new Image();
-  //     img.src = dataUrl;
-  //     console.log("잘 받아왔자나ㅜㅜㅜ", dataUrl);
-  //     setPreviewCard(dataUrl);
-  //     navigate("/preview");
-  //     // document.body.appendChild(img);
-  //   } catch (error) {
-  //     console.error("oops, something went wrong!", error);
-  //   }
-  // };
+  const cardRef = useRef<HTMLImageElement | null>(null);
+  const [previewCard, setPreviewCard] = useRecoilState(PreviewCardAtom);
+  console.log("미리보기", previewCard);
+  const onCompeleteButton = async () => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
+    }
+    const filter = (node: Node) => {
+      if (node instanceof Element) {
+        return node.tagName !== "BUTTON";
+      }
+      return true;
+    };
+    try {
+      const dataUrl = await domtoimage.toPng(card, { filter });
+      const img = new Image();
+      img.src = dataUrl;
+      setPreviewCard(dataUrl);
+      navigate("/preview");
+    } catch (error) {
+      console.error("문제 발생", error);
+    }
+  };
 
   // Delete 모달창 관리
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const showDeleteModalHandler = () => {
-    setShowDeleteModal(true);
-  };
+  // const showDeleteModalHandler = () => {
+  //   setShowDeleteModal(true);
+  // };
 
-  const hideDeleteModalHandler = () => {
-    setShowDeleteModal(false);
-  };
+  // const hideDeleteModalHandler = () => {
+  //   setShowDeleteModal(false);
+  // };
 
   return (
     <StyledMakeUI>
       {/* Delete 모달창 */}
-      <ModalOverlay
+      {/* <ModalOverlay
         blur
         onHideModal={hideDeleteModalHandler}
         show={showDeleteModal}
       >
         <DeleteModal onHideModal={hideDeleteModalHandler} />
-      </ModalOverlay>
+      </ModalOverlay> */}
       <Header />
-      <div style={{ marginTop: "45px", overflowY: "scroll" }}>
+      <div style={{ marginTop: "54px" }}>
         <MakeCard ref={cardRef}>
           <Viewer
             src={selectedCharacterItem}
@@ -293,8 +292,8 @@ const MakeUI: React.FC = () => {
             style={{
               width: "360px",
               height: "360px",
-              positon: "absolute",
-              zIndex: "10",
+              position: "absolute",
+              zIndex: "50",
               top: "46px",
             }}
             className="sample-canvas"
@@ -303,8 +302,7 @@ const MakeUI: React.FC = () => {
         </MakeCard>
         <CompleteButton
           onClick={() => {
-            onDownloadButton();
-            showDeleteModalHandler();
+            onCompeleteButton();
           }}
         >
           <img
@@ -313,7 +311,7 @@ const MakeUI: React.FC = () => {
             style={{ width: "24px" }}
           />
           <br />
-          다운로드
+          완성하기
         </CompleteButton>
         <input
           style={{ display: "none" }}
@@ -642,13 +640,12 @@ const MakeUI: React.FC = () => {
 
 const StyledMakeUI = styled.div`
   width: 360px;
-  /* height: calc(100vh - 110px); */
 `;
 
 const MakeCard = styled.div`
   width: 360px;
-  height: 400px;
-  /* position: relative; */
+  height: 360px;
+  position: relative;
 `;
 
 const Viewer = styled.img<ViewerProps>`
@@ -657,7 +654,8 @@ const Viewer = styled.img<ViewerProps>`
   background: ${(props) => props.backgroundhex};
   background-image: url(${(props) => props.backgroundimage || "none"});
   background-size: cover;
-  position: fixed;
+  position: absolute;
+  z-index: -50;
 `;
 
 const CompleteButton = styled.button`
