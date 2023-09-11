@@ -25,7 +25,7 @@ const StyledMyItem = styled.div`
 const MyItemContainer = styled.div`
   width: 100%;
   height: 689px;
-  background: green;
+  /* background: green; */
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   padding: 10px;
