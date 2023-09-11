@@ -1,9 +1,16 @@
+import { APIResponse, Page, PhotoChart } from "../data/type";
 import { baseAxios } from "./baseAxios";
 
-export const getPhotoChart = async () => {
-  const response = await baseAxios
-    .get("/api/v1/photo/chart")
-    .then((response) => response.data.data);
-  console.log(response);
-  return response;
+export const getPhotoChart = async (
+  page: number,
+  size: number,
+  standard: "likes" | "createdAt"
+) => {
+  const {
+    data: { result },
+  } = await baseAxios.get<APIResponse<Page<PhotoChart[]>>>(
+    `/photo/chart?page=${page}&size=${size}&standard=${standard}`
+  );
+
+  return result;
 };
