@@ -1,14 +1,16 @@
 import styled from "styled-components";
-import MyItemBox from "./components/MyItemBox";
+// import MyItemBox from "./components/MyItemBox";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
+import NotSignIn from "./components/NotSignIn";
 
 const MyPageUI: React.FC = () => {
   return (
     <>
       <StyledMypage>
         <Header />
-        <MyItemBox />
+        {/* <MyItemBox /> */}
+        <NotSignIn />
         <BottomNav type={"mypage"} />
       </StyledMypage>
     </>
@@ -22,7 +24,7 @@ const StyledMypage = styled.div`
   left: 0;
   margin: 0 auto;
   top: 54px;
-  background: red;
+  /* background: red; */
 `;
 
 export default MyPageUI;

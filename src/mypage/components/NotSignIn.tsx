@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export default function NotSignIn() {
@@ -12,9 +13,18 @@ export default function NotSignIn() {
           우리 애기들, 나를 보고 싶으면 로그인하도록!
         </NotSignInGuideSubTitle>
       </NotSignInGuide>
-      <button>
-        <img src="/assets/image/kakao_login_large_wide.png" style={{ width: "260px" }}/>
-      </button>
+      <Link
+        to={`https://kauth.kakao.com/oauth/authorize?client_id=${
+          import.meta.env.VITE_KAKAO_API_KEY
+        }&redirect_uri=${
+          import.meta.env.VITE_KAKAO_REDIRECT_URI
+        }&response_type=code`}
+      >
+        <img
+          src="/assets/image/kakao_login_large_wide.png"
+          style={{ width: "260px" }}
+        />
+      </Link>
     </StyledNotSignIn>
   );
 }
