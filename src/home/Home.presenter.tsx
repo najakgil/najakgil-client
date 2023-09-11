@@ -1,37 +1,45 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Header from "../components/Header";
-import BottomNav from "../components/BottomNav";
 import CardItem from "./components/CardItem";
-import { CardItemList } from "./components/CardItemList";
-import { PhotoChart } from "../data/type";
-import { useQuery } from "react-query";
-import { getPhotoChart } from "../api/photoChart";
-// import { postUploadPhoto } from "../api/uploadPhoto";
+import { Standard } from "../data/type";
+import { useGetPhotoChart } from "../hooks/useGetPhotoChart";
+import { useIntersect } from "../hooks/useIntersect";
+
+type FilterType = {
+  type: Standard;
+  name: string;
+};
+
+const filter: { [key in Standard]: FilterType } = {
+  likes: {
+    type: "likes",
+    name: "인기순",
+  },
+  createdAt: {
+    type: "createdAt",
+    name: "최신순",
+  },
+};
 
 const HomeUI: React.FC = () => {
-  const { data, isLoading, isError } = useQuery<PhotoChart[]>(
-    "get-photo-chart",
-    () => getPhotoChart(),
-    // () => postUploadPhoto()
-  );
-
-  if (isError) {
-    console.log("Error while get Fortune Data.");
-  }
-  if (isLoading) {
-    console.log("Loading get Fortune Data...");
-  }
-  if (data) {
-    console.log("get fortune success ====> ", data);
-  }
-
   // 정렬 : 최신순 & 인기순
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedItem, setSelectedItem] = useState("인기순");
-  const handleItemClick = (itemText: string) => {
-    setSelectedItem(itemText);
-  };
+  const [selectedItem, setSelectedItem] = useState<FilterType>(filter.likes);
+
+  const { data, fetchNextPage, isLoading, hasNextPage } = useGetPhotoChart(
+    selectedItem.type
+  );
+
+  const onIntersect = useCallback(async () => {
+    if (hasNextPage && !isLoading) {
+      await fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isLoading]);
+
+  const target = useIntersect(onIntersect, {
+    threshold: 0.7,
+  });
 
   return (
     <>
@@ -41,14 +49,14 @@ const HomeUI: React.FC = () => {
         {/* 정렬 */}
         <FilterBox>
           <FilterButton onClick={() => setIsExpanded(!isExpanded)}>
-            {selectedItem}
+            {selectedItem.name}
             <img alt="toggle" src="/assets/icon/toggle.svg" />
           </FilterButton>
           {isExpanded && (
             <ToggleContainer>
               <ToggleItem
                 onClick={() => {
-                  handleItemClick("인기순");
+                  setSelectedItem(filter.likes);
                   setIsExpanded(false);
                 }}
               >
@@ -56,7 +64,7 @@ const HomeUI: React.FC = () => {
               </ToggleItem>
               <ToggleItem
                 onClick={() => {
-                  handleItemClick("최신순");
+                  setSelectedItem(filter.createdAt);
                   setIsExpanded(false);
                 }}
               >
@@ -67,18 +75,13 @@ const HomeUI: React.FC = () => {
         </FilterBox>
         {/* 인기순 & 최신순 페이지 */}
         <CardContainer>
-          {selectedItem === "인기순" && (
-            <PopularityContainer>
-              {CardItemList.map((item, index) => (
-                <CardItem key={index} src={item.src} />
-              ))}
-            </PopularityContainer>
+          {data?.pages?.map((page) =>
+            page?.content?.map((photoChart) => (
+              <CardItem key={photoChart.photo_id} src={photoChart.imgUrl} />
+            ))
           )}
-          {selectedItem === "최신순" && (
-            <LatestContainer>최신순</LatestContainer>
-          )}
+          <div ref={target}></div>
         </CardContainer>
-        <BottomNav type={"home"} />
       </StyledHome>
     </>
   );
@@ -92,7 +95,7 @@ const StyledHome = styled.div`
   left: 0;
   margin: 0 auto;
   top: 54px;
-  background: red;
+  /* background: red; */
 `;
 
 // 정렬
@@ -141,29 +144,13 @@ const ToggleItem = styled.div`
 
 // 인기순 & 최신순 페이지
 const CardContainer = styled.div`
-  width: 360px;
-  height: 640px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: pink;
-  margin: 0;
-`;
-
-const PopularityContainer = styled.div`
-  width: 100%;
-  height: 640px;
-  background: green;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  height: 640px;
   padding: 10px;
+  margin: 0;
   gap: 10px;
   overflow-y: scroll;
-`;
-
-const LatestContainer = styled.div`
-  height: 640px;
-  background: blue;
 `;
 
 export default HomeUI;
