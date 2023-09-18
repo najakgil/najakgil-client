@@ -8,15 +8,17 @@ const Redirect = () => {
 
   const getAuth = async (code: string) => {
     const d = await getLogin(code);
-    console.log("카카오 로그인 코드", d);
+    console.log(d.data);
   };
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      getAuth(code);
+    if (!code) {
+      console.log("없음");
+      return;
     }
 
+    getAuth(code);
     navigate("/mypage");
   }, []);
 
