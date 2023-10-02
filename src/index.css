@@ -13,6 +13,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   display: flex;
   justify-content: center;
