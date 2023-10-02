@@ -21,4 +21,10 @@ export type PhotoChart = {
   likes: number;
 };
 
+export type Login = {
+  jwt: string;
+  message: string;
+  userId: number;
+};
+
 export type Standard = "likes" | "createdAt";
