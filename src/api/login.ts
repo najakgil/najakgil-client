@@ -1,12 +1,10 @@
-// import { baseAxios } from "./baseAxios";
-
-// export const getLogin = (code: string) => {
-//   // return baseAxios.get(`/api/v1/oauth/kakao?code=${code}`);
-//   return baseAxios.get(`/oauth2/authorization/kakao?code=${code}`);
-// };
-
+import { APIResponse, Login } from "../data/type";
 import { baseAxios } from "./baseAxios";
 
-export const getLogin = (code: string) => {
-  return baseAxios.get(`api/oauth/kakao?code=${code}`);
+export const getLogin = async (code: string) => {
+  const { data } = await baseAxios.get<APIResponse<Login>>(
+    `api/oauth/kakao?code=${code}`
+  );
+
+  return data.result;
 };
