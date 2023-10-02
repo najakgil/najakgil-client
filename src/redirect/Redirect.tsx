@@ -1,14 +1,21 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getLogin } from "../api/login";
+import { setCookie } from "../util/cookie";
 
 const Redirect = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const getAuth = async (code: string) => {
-    const d = await getLogin(code);
-    console.log(d.data);
+    const data = await getLogin(code);
+    if (data) {
+      setCookie("jwtToken", data.jwt);
+      setCookie("userId", String(data.userId));
+    }
+    console.log("카카오로그인 정보 : ", data);
+
+    navigate("/mypage");
   };
 
   useEffect(() => {
@@ -19,7 +26,6 @@ const Redirect = () => {
     }
 
     getAuth(code);
-    navigate("/mypage");
   }, []);
 
   return null;
