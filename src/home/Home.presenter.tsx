@@ -5,6 +5,7 @@ import CardItem from "./components/CardItem";
 import { Standard } from "../data/type";
 import { useGetPhotoChart } from "../hooks/useGetPhotoChart";
 import { useIntersect } from "../hooks/useIntersect";
+import { getCookie } from "../util/cookie";
 
 type FilterType = {
   type: Standard;
@@ -26,9 +27,11 @@ const HomeUI: React.FC = () => {
   // 정렬 : 최신순 & 인기순
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedItem, setSelectedItem] = useState<FilterType>(filter.likes);
+  const userId = getCookie("userId");
 
   const { data, fetchNextPage, isLoading, hasNextPage } = useGetPhotoChart(
-    selectedItem.type
+    selectedItem.type,
+    userId
   );
 
   const onIntersect = useCallback(async () => {
@@ -77,7 +80,7 @@ const HomeUI: React.FC = () => {
         <CardContainer>
           {data?.pages?.map((page) =>
             page?.content?.map((photoChart) => (
-              <CardItem key={photoChart.photo_id} src={photoChart.imgUrl} />
+              <CardItem key={photoChart.photo_id} likeCount={photoChart.likes} photoId={photoChart.photo_id} src={photoChart.imgUrl} />
             ))
           )}
           <div ref={target}></div>
