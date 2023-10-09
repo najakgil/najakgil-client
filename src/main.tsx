@@ -7,7 +7,15 @@ import { RecoilRoot } from "recoil";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CookiesProvider } from "react-cookie";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
