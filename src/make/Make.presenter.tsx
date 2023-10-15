@@ -286,7 +286,7 @@ const MakeUI: React.FC = () => {
         >
           <img
             alt="complete"
-            src="/assets/icon/download.svg"
+            src="/assets/icon/complete.svg"
             style={{ width: "24px" }}
           />
           <br />
