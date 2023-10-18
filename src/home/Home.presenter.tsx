@@ -6,6 +6,10 @@ import { Standard } from "../data/type";
 import { useGetPhotoChart } from "../hooks/useGetPhotoChart";
 import { useIntersect } from "../hooks/useIntersect";
 import { getCookie } from "../util/cookie";
+import ModalOverlay from "../components/ModalOverlay";
+import Modal from "../components/Modal";
+import { useNavigate } from "react-router-dom";
+import BottomNav from "../components/BottomNav";
 
 type FilterType = {
   type: Standard;
@@ -24,6 +28,18 @@ const filter: { [key in Standard]: FilterType } = {
 };
 
 const HomeUI: React.FC = () => {
+  const navigate = useNavigate();
+
+  // 모달창 관리
+  const cookie = getCookie("jwtToken");
+  const [activeModal, setActiveModal] = useState<"non-membership" | null>(null);
+  const openModal = (modalType: "non-membership") => {
+    setActiveModal(modalType);
+  };
+  const closeModal = () => {
+    setActiveModal(null);
+  };
+
   // 정렬 : 최신순 & 인기순
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedItem, setSelectedItem] = useState<FilterType>(filter.likes);
@@ -61,6 +77,7 @@ const HomeUI: React.FC = () => {
                 onClick={() => {
                   setSelectedItem(filter.likes);
                   setIsExpanded(false);
+                  openModal("non-membership");
                 }}
               >
                 인기순
@@ -80,11 +97,30 @@ const HomeUI: React.FC = () => {
         <CardContainer>
           {data?.pages?.map((page) =>
             page?.content?.map((photoChart) => (
-              <CardItem key={photoChart.photo_id} likeCount={photoChart.likes} photoId={photoChart.photo_id} src={photoChart.imgUrl} />
+              <CardItem
+                key={photoChart.photo_id}
+                likeCount={photoChart.likes}
+                photoId={photoChart.photo_id}
+                src={photoChart.imgUrl}
+              />
             ))
           )}
           <div ref={target}></div>
         </CardContainer>
+        {activeModal === "non-membership" && !cookie && (
+          <ModalOverlay show={true} onHideModal={closeModal}>
+            <Modal
+              title="로그인하기"
+              subtitle="좋아요 기능 이용을 위해서는, 로그인이 필요해요. 로그인하시겠어요?"
+              buttonName="로그인하기"
+              onMoveClick={() => {
+                navigate("/mypage");
+              }}
+              onHideModal={closeModal}
+            />
+          </ModalOverlay>
+        )}
+        <BottomNav type={"home"} />
       </StyledHome>
     </>
   );
