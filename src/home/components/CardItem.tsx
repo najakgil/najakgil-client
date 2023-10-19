@@ -39,7 +39,11 @@ export default function CardItem(props: CardItemProps) {
     <CardItemBox>
       {like.map((index) => (
         <LikeBox key={index}>
-          <button onClick={() => handleLikeClick(index)}>
+          <button
+            onClick={() => {
+              handleLikeClick(index);
+            }}
+          >
             <img src="public/assets/icon/heart.svg" alt="Heart Icon" />
           </button>
           <div>{props.likeCount}</div>
