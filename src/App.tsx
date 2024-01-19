@@ -1,9 +1,5 @@
 function App() {
-  return (
-    <>
-      나작길
-    </>
-  )
+  return '나작길';
 }
 
-export default App
+export default App;
