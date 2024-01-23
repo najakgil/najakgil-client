@@ -8,16 +8,29 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "format": "prettier --write --cache ."
+    "format": "prettier --write --cache .",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@storybook/addon-themes": "7.6.10",
     "axios": "1.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "6.21.3",
     "recoil": "0.7.7",
+    "storybook": "7.6.10",
     "styled-components": "6.1.8"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "7.6.10",
+    "@storybook/addon-interactions": "7.6.10",
+    "@storybook/addon-links": "7.6.10",
+    "@storybook/addon-onboarding": "^1.0.10",
+    "@storybook/blocks": "7.6.10",
+    "@storybook/react": "7.6.10",
+    "@storybook/react-vite": "7.6.10",
+    "@storybook/test": "7.6.10",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "6.19.0",
@@ -31,6 +44,7 @@
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "eslint-plugin-storybook": "0.6.15",
     "prettier": "3.2.4",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
