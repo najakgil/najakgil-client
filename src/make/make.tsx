@@ -12,7 +12,7 @@ const Make = () => {
       <Header />
       <Canvas />
       <Palette />
-      <CompleteButton onClick={() => navigate('/preview')}/>
+      <CompleteButton onClick={() => navigate('/preview')} />
       <Navigation page="make" />
     </>
   );
