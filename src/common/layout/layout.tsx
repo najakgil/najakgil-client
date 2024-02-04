@@ -5,5 +5,11 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  return <S.Wrapper>{children}</S.Wrapper>;
+  return (
+    <S.Wrapper>
+      <div style={{ height: '45px' }} />
+      {children}
+      <div style={{ height: '66px' }} />
+    </S.Wrapper>
+  );
 }

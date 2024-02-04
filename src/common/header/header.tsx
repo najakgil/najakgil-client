@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <S.Wrapper>
       <S.Container>
-        <S.Logo src="/assets/svg/logo.svg" alt="Logo" onClick={() => navigate('/home')}/>
+        <S.Logo src="/assets/svg/logo.svg" alt="Logo" onClick={() => navigate('/home')} />
       </S.Container>
     </S.Wrapper>
   );
