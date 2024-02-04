@@ -12,13 +12,14 @@ export const Wrapper = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  background-color: yellow;
+  background-color: white;
+  border-top: 1px solid #e5e5e5;
 `;
 
 export const Tab = styled.div<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
-  width: 90px;
+  width: 120px;
   padding: 10px 0px;
   justify-content: center;
   align-items: center;

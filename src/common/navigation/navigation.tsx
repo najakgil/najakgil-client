@@ -37,7 +37,7 @@ export default function Navigation({ page }: NavigationBarProps) {
         <a href={`/${item.icon}`} key={item.id}>
           <S.Tab isActive={item.icon === page}>
             <img
-              src={`/icons/navigation/${item.icon}${item.icon === page ? '-fill' : ''}.svg`}
+              src={`assets/svg/navigation/${item.icon}${item.icon === page ? '-fill' : ''}.svg`}
               alt={item.title}
             />
             {item.title}
