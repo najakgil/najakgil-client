@@ -1,10 +1,15 @@
+import Header from '../common/header/header';
+import Navigation from '../common/navigation/navigation';
+import LoginIntroduction from './components/login-introduction';
+
 const MyPage = () => {
-    return (
-      <div>
-        <h1>MyPage</h1>
-      </div>
-    );
-  };
-  
-  export default MyPage;
-  
+  return (
+    <>
+      <Header />
+      <LoginIntroduction />
+      <Navigation page="mypage" />
+    </>
+  );
+};
+
+export default MyPage;
