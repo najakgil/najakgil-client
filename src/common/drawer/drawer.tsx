@@ -42,6 +42,12 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
   const jwtToken = getCookie('jwtToken');
   const navigate = useNavigate();
 
+  const kakaoLogin = () => {
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${
+      import.meta.env.VITE_KAKAO_API_KEY
+    }&redirect_uri=${import.meta.env.VITE_KAKAO_REDIRECT_URI}&response_type=code`;
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -123,7 +129,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
                   transition={{ duration: 1.3, ease: 'easeInOut' }}
                   className={S.accountButton}
                 >
-                  <p>로그인</p>
+                  <p onClick={() => kakaoLogin()}>로그인</p>
                 </motion.div>
               )}
             </div>
