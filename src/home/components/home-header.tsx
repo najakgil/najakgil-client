@@ -20,7 +20,7 @@ export default function HomeHeader() {
           <img
             src="/assets/svg/drawer.svg"
             alt="drawer"
-            style={{ width: '15px' }}
+            style={{ width: '15px', cursor: 'pointer'}}
             onClick={openDrawer}
           />
         </div>

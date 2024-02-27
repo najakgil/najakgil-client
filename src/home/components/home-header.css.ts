@@ -1,11 +1,9 @@
 import { css } from '@emotion/css';
 
 export const wrapper = css`
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
-  display: flex;
-  justify-content: center;
   width: 100%;
   z-index: 0;
 `;

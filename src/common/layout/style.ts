@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   width: 100%;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 0 24px;
+  /* padding: 0 24px; */
   align-items: center;
   background-color: white;
   /* overflow: hidden; */
