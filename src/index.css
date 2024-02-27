@@ -217,3 +217,7 @@ input:focus {outline:none;}
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+textarea:focus, input:focus{
+  outline: none;
+}

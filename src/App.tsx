@@ -7,6 +7,7 @@ import Redirect from './redirect/redirect';
 import Storage from './storage/storage';
 import Goods from './goods/goods';
 import GoodsDetail from './goods/goods-detail';
+import Event from './event/event';
 
 const App: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const App: React.FC = () => {
           <Route path="/storage" element={<Storage />} />
           <Route path="/goods" element={<Goods />} />
           <Route path="/goodsDetail/:id" element={<GoodsDetail />} />
+          <Route path="/event" element={<Event />} />
         </Routes>
       </BrowserRouter>
     </>
