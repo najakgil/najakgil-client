@@ -14,7 +14,7 @@ const Redirect = () => {
       setCookie('userId', String(data.userId));
     }
 
-    navigate('/mypage');
+    navigate('/home')
   };
 
   useEffect(() => {
