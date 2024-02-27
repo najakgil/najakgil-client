@@ -9,7 +9,7 @@ export default function Layout({ children }: LayoutProps) {
     <S.Wrapper>
       {/* <div style={{ height: '45px' }} /> */}
       {children}
-      <div style={{ height: '66px' }} />
+      {/* <div style={{ height: '66px' }} /> */}
     </S.Wrapper>
   );
 }
