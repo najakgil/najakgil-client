@@ -4,6 +4,9 @@ import Home from './home/home';
 import Preview from './preview/preview';
 import MyPage from './mypage/mypage';
 import Redirect from './redirect/redirect';
+import Storage from './storage/storage';
+import Goods from './goods/goods';
+import GoodsDetail from './goods/goods-detail';
 
 const App: React.FC = () => {
   return (
@@ -12,9 +15,12 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Make />} />
           <Route path="/home" element={<Home />} />
-          <Route path='/preview' element={<Preview />} />
+          <Route path="/preview" element={<Preview />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/redirect" element={<Redirect />} />
+          <Route path="/storage" element={<Storage />} />
+          <Route path="/goods" element={<Goods />} />
+          <Route path="/goodsDetail/:id" element={<GoodsDetail />} />
         </Routes>
       </BrowserRouter>
     </>

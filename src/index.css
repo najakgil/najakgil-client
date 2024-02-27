@@ -208,3 +208,12 @@ input:focus {outline:none;}
 .swiper-pagination-bullet-active {
   background: #2294FF !important;
 }
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
