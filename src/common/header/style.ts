@@ -1,27 +1,36 @@
-import styled from 'styled-components';
+import {css} from '@emotion/css';
 
-export const Wrapper = styled.div`
-  position: fixed;
+export const wrapper = css`
+  position: relative;
   top: 0;
   left: 0;
-  display: flex;
-  justify-content: center;
   width: 100%;
   z-index: 0;
 `;
 
-export const Container = styled.div`
+export const container = css`
   width: 100%;
-  min-width: 390px;
+  min-width: 360px;
   max-width: 450px;
-  height: 45px;
+  height: 56px;
   padding: 10px 25px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #fff;
   border-bottom: 1px solid #f0f0f0;
-`;
 
-export const Logo = styled.img`
-  width: 25px;
-  height: 25px;
+  p {
+    color: #2294FF;
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  img {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
 `;
