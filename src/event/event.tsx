@@ -12,7 +12,14 @@ const Event = () => {
       <div style={{ width: '360px', height: ' 360px', background: 'pink' }} />
       <div className={S.base}>
         <Comment />
-        <div style={{width: '100%', paddingLeft: '20px', display: 'flex', justifyContent: 'flex-start'}}>
+        <div
+          style={{
+            width: '360px',
+            paddingLeft: '20px',
+            display: 'flex',
+            justifyContent: 'flex-start',
+          }}
+        >
           <Filter />
         </div>
         {CommentData.map((comment) => (
