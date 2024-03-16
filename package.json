@@ -9,13 +9,12 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write --cache .",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.3",
-    "@storybook/addon-themes": "7.6.10",
     "@tanstack/react-query": "^5.22.2",
     "@tanstack/react-query-devtools": "^5.24.0",
     "axios": "1.6.5",
@@ -26,20 +25,22 @@
     "react-query": "^3.39.3",
     "react-router-dom": "6.21.3",
     "recoil": "0.7.7",
-    "storybook": "7.6.10",
     "styled-components": "6.1.8",
     "swiper": "^11.0.6",
-    "vaul": "^0.9.0"
+    "vaul": "^0.9.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "7.6.10",
-    "@storybook/addon-interactions": "7.6.10",
-    "@storybook/addon-links": "7.6.10",
-    "@storybook/addon-onboarding": "^1.0.10",
-    "@storybook/blocks": "7.6.10",
-    "@storybook/react": "7.6.10",
-    "@storybook/react-vite": "7.6.10",
-    "@storybook/test": "7.6.10",
+    "@chromatic-com/storybook": "^1.2.22",
+    "@storybook/addon-essentials": "^8.0.0",
+    "@storybook/addon-interactions": "^8.0.0",
+    "@storybook/addon-links": "^8.0.0",
+    "@storybook/addon-onboarding": "^8.0.0",
+    "@storybook/blocks": "^8.0.0",
+    "@storybook/react": "^8.0.0",
+    "@storybook/react-vite": "^8.0.0",
+    "@storybook/test": "^8.0.0",
+    "@types/prop-types": "^15",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "6.19.0",
@@ -55,6 +56,8 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "eslint-plugin-storybook": "0.6.15",
     "prettier": "3.2.4",
+    "prop-types": "^15.8.1",
+    "storybook": "^8.0.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }

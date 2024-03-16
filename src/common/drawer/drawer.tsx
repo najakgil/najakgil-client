@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import * as S from './drawer.css';
+import * as S from './Drawer.css';
 import { getCookie } from '../../util/cookie';
 import { useNavigate } from 'react-router-dom';
-import { BottomSheet } from '../bottom-sheet/bottom-sheet';
-
+import { BottomSheet } from '../BottomSheet/BotttomSheet';
 interface DrawerProps {
   isOpen: boolean;
   onClose: () => void;
