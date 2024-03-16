@@ -1,15 +1,10 @@
 import * as S from './style.ts';
+import { Outlet } from 'react-router-dom';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps) {
+export default function Layout() {
   return (
     <S.Wrapper>
-      {/* <div style={{ height: '45px' }} /> */}
-      {children}
-      {/* <div style={{ height: '66px' }} /> */}
+      <Outlet />
     </S.Wrapper>
   );
 }

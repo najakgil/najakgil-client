@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "pretendard";         
-  src: url("../public/assets/fonts/PretendardVariable.woff2");
+  font-family: 'pretendard';
+  src: url('../public/assets/fonts/PretendardVariable.woff2');
 }
 
 :root {
@@ -176,8 +176,9 @@ body {
   user-select: none;
 }
 
-input:focus {outline:none;}
-
+input:focus {
+  outline: none;
+}
 
 /* swiper */
 /* .swiper {
@@ -196,17 +197,18 @@ input:focus {outline:none;}
   text-align: center;
   font-size: 18px;
   padding: 16px;
+  margin-bottom: 15px;
 }
 
 .swiper-pagination {
-  margin: 10px 0;
+  height: 20px;
 }
 
 .swiper-pagination-bullet {
   background: #d9d9d9 !important;
 }
 .swiper-pagination-bullet-active {
-  background: #2294FF !important;
+  background: #2294ff !important;
 }
 
 .scroll::-webkit-scrollbar {
@@ -218,6 +220,7 @@ input:focus {outline:none;}
   scrollbar-width: none;
 }
 
-textarea:focus, input:focus{
+textarea:focus,
+input:focus {
   outline: none;
 }
