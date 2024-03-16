@@ -29,7 +29,8 @@
     "storybook": "7.6.10",
     "styled-components": "6.1.8",
     "swiper": "^11.0.6",
-    "vaul": "^0.9.0"
+    "vaul": "^0.9.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "7.6.10",
