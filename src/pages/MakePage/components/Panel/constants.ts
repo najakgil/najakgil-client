@@ -1,3 +1,5 @@
+import { BackgroundTagList, CharacterTagList, DecorationTagList } from './type';
+
 export const tabList = [
   {
     id: 1,
@@ -13,7 +15,25 @@ export const tabList = [
   },
 ];
 
-export const tagList = {
+export const characterTagList = [
+  'winter',
+  'summer',
+  'scrub',
+  'suit',
+  'graduationsuit',
+  'fhanbok',
+  'mhanbok',
+] as const;
+
+export const decorationTagList = ['text', 'sticker', 'photo', 'brush', 'eraser'] as const;
+
+export const backgroundTagList = ['color', 'image'] as const;
+
+export const tagList: {
+  character: { id: number; tag: CharacterTagList; title: string }[];
+  decoration: { id: number; tag: DecorationTagList; title: string }[];
+  background: { id: number; tag: BackgroundTagList; title: string }[];
+} = {
   character: [
     {
       id: 1,
@@ -49,6 +69,45 @@ export const tagList = {
       id: 7,
       tag: 'mhanbok',
       title: '남자 한복',
+    },
+  ],
+  decoration: [
+    {
+      id: 1,
+      tag: 'text',
+      title: '텍스트',
+    },
+    {
+      id: 2,
+      tag: 'sticker',
+      title: '스티커',
+    },
+    {
+      id: 3,
+      tag: 'photo',
+      title: '사진',
+    },
+    {
+      id: 4,
+      tag: 'brush',
+      title: '펜',
+    },
+    {
+      id: 5,
+      tag: 'eraser',
+      title: '지우개',
+    },
+  ],
+  background: [
+    {
+      id: 1,
+      tag: 'color',
+      title: '색상',
+    },
+    {
+      id: 2,
+      tag: 'image',
+      title: '이미지',
     },
   ],
 } as const;
@@ -181,3 +240,13 @@ export const characterImageSrc = {
     },
   ],
 };
+
+export const stickerImageSrc = [
+  { id: 1, src: '/assets/image/sticker/sticker_1.png' },
+  { id: 2, src: '/assets/image/sticker/sticker_2.png' },
+  { id: 3, src: '/assets/image/sticker/sticker_3.png' },
+  { id: 4, src: '/assets/image/sticker/sticker_4.png' },
+  { id: 5, src: '/assets/image/sticker/sticker_5.png' },
+  { id: 6, src: '/assets/image/sticker/sticker_6.png' },
+];
+

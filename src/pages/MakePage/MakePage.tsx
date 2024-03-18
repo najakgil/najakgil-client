@@ -1,8 +1,8 @@
 import Header from '../../common/Header/header';
 import MoveButton from '../../common/MoveButton/MoveButton';
-import Canvas from './components/canvas';
+import Canvas from './components/Canvas/Canvas';
 import CompleteButton from './components/complete-button';
-import Palette from './components/palette/palette';
+import Panel from './components/Panel/Panel';
 import { useNavigate } from 'react-router-dom';
 
 const MakePage = () => {
@@ -21,7 +21,7 @@ const MakePage = () => {
         right=""
       />
       <Canvas />
-      <Palette />
+      <Panel />
       <CompleteButton onClick={() => navigate('/preview')} />
     </>
   );
