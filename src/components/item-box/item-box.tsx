@@ -1,6 +1,23 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
+interface ItemBoxProps {
+  imgSrc: string;
+  isActive?: boolean;
+  onClick?: () => void;
+}
+
+export default function ItemBox({ imgSrc, isActive = false, onClick }: ItemBoxProps) {
+  const tagStyle = isActive ? activeStyle : inactiveStyle;
+  return (
+    <img
+      css={[wrapperStyle, tagStyle]}
+      src={imgSrc}
+      onClick={onClick}
+    />
+  );
+}
+
 const wrapperStyle = css({
   width: '100%',
   aspectRatio: 1,
@@ -8,21 +25,10 @@ const wrapperStyle = css({
   cursor: 'pointer',
 });
 
-interface ItemBoxProps {
-  imgSrc: string;
-  isActive?: boolean;
-  onClick?: () => void;
-}
+const activeStyle = css({
+  border: '1.5px solid #2294ff',
+});
 
-export default function ItemBox({ imgSrc, isActive, onClick }: ItemBoxProps) {
-  return (
-    <img
-      css={wrapperStyle}
-      style={{
-        border: isActive ? '1.5px solid #2294ff' : '0.5px solid #d9d9d9',
-      }}
-      src={imgSrc}
-      onClick={onClick}
-    />
-  );
-}
+const inactiveStyle = css({
+  border: '0.5px solid #d9d9d9',
+});
