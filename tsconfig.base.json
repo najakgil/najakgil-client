@@ -11,7 +11,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "newLine": "lf"
+    "newLine": "lf",
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+  },
+  "rules": {
+    "array-type": false
   },
   "exclude": ["**/node_modules", "**/.*/"]
 }

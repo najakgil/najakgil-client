@@ -7,7 +7,8 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "jsxImportSource": "@emotion/react",
   },
   "exclude": ["**/node_modules", "**/.*/"],
   "include": [
