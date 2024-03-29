@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { ItemBox } from 'components/item-box';
+import { useStickerPanelStore } from 'store/panel/useStickerPanelStore';
 import { stickerImageSrc } from '../../constants';
 
 export const stickerContainer = css({
@@ -13,14 +14,23 @@ export const stickerContainer = css({
   backgroundColor: 'white',
 });
 
-export default function StickerPanel() {
+interface StickerPanelProps {
+  handleStickerClick: (stickerId: number) => void;
+}
+
+export default function StickerPanel({ handleStickerClick }: StickerPanelProps) {
+  const { activeSticker, setActiveSticker } = useStickerPanelStore();
   return (
     <div css={stickerContainer}>
       {stickerImageSrc.map((sticker, index) => (
         <ItemBox
           key={index}
           imgSrc={sticker.src}
-          onClick={() => console.log('sticker clicked')}
+          onClick={() => {
+            handleStickerClick(index + 1);
+            setActiveSticker(sticker.src);
+          }}
+          isActive={sticker.src === activeSticker}
         />
       ))}
     </div>
