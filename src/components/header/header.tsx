@@ -17,14 +17,16 @@ const container = css({
   height: '56px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
+  justifyContent: 'center',
   backgroundColor: '#fff',
   borderBottom: '1px solid #f0f0f0',
 });
 
 const headerButton = css({
-  width: '16px',
   flex: 1,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 });
 
 const headerTitle = css({
@@ -46,9 +48,9 @@ export default function Header({ left, title, right }: HeaderProps) {
     <>
       <header css={wrapper}>
         <div css={container}>
-          <button css={headerButton}>{left}</button>
+          <div css={headerButton}>{left}</div>
           <p css={headerTitle}>{title}</p>
-          <button css={headerButton}>{right}</button>
+          <div css={headerButton}>{right}</div>
         </div>
       </header>
     </>
