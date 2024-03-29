@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { css } from '@emotion/react';
 import { Button } from 'components/button';
+import { SnackBar } from 'components/snack-bar';
 import { useTextPanelStore } from 'store/panel/useTextPanelStore';
 
 interface TextPanelProps {
@@ -16,12 +18,23 @@ export default function TextPanel({
   inputText,
   handleInputChange,
   handleTextButtonClick,
-  selectedTextId,
   editText,
   handleEditTextChange,
   handleEditTextConfirm,
 }: TextPanelProps) {
-  const { textColor, setTextColor, textSize, setTextSize } = useTextPanelStore();
+  const {
+    textColor,
+    setTextColor,
+    textSize,
+    setTextSize,
+    selectedTextId,
+    setSelectedTextId,
+    textObjects,
+    setTextObjects,
+  } = useTextPanelStore();
+
+  // const [editSnackOpen, setEditSnackOpen] = useState(false);
+  const [deleteSnackOpen, setDeleteSnackOpen] = useState(false);
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextColor(event.target.value);
@@ -29,6 +42,22 @@ export default function TextPanel({
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextSize(parseInt(event.target.value));
+  };
+
+  const handleDeleteTextItem = () => {
+    const deleteTextIndex = textObjects.findIndex((text) => text.id === selectedTextId);
+    if (deleteTextIndex !== -1) {
+      const updatedTextObjects = [
+        ...textObjects.slice(0, deleteTextIndex),
+        ...textObjects.slice(deleteTextIndex + 1),
+      ];
+      setDeleteSnackOpen(true);
+      setTimeout(() => {
+        setDeleteSnackOpen(false);
+      }, 1000);
+      setTextObjects(updatedTextObjects);
+      setSelectedTextId('');
+    }
   };
 
   return (
@@ -59,20 +88,6 @@ export default function TextPanel({
             </>
           )}
         </div>
-        {/* <div>
-          {selectedTextId && (
-            <div>
-              <input
-                css={Input}
-                type="text"
-                value={editText}
-                onChange={handleEditTextChange}
-                placeholder="Edit text"
-              />
-              <button onClick={handleEditTextConfirm}>Confirm</button>
-            </div>
-          )}
-        </div> */}
       </div>
       <div css={contentBox}>
         <label css={title}>텍스트 색상</label>
@@ -97,20 +112,24 @@ export default function TextPanel({
         />
       </div>
       {selectedTextId ? (
-        <Button
-          variants="primary"
-          onClick={() => {
-            handleEditTextConfirm();
-            selectedTextId = null;
-          }}
-        >
-          수정하기
-        </Button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button variants="primary" onClick={handleEditTextConfirm}>
+            수정하기
+          </Button>
+          <Button variants="secondary" onClick={handleDeleteTextItem}>
+            삭제하기
+          </Button>
+        </div>
       ) : (
         <Button variants="primary" onClick={handleTextButtonClick}>
           추가하기
         </Button>
       )}
+      <SnackBar
+        message="텍스트가 삭제되었습니다."
+        open={deleteSnackOpen}
+        onClose={() => setDeleteSnackOpen(false)}
+      />
     </div>
   );
 }

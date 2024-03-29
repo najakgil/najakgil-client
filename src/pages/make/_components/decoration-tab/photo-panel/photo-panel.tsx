@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
+import { SnackBar } from 'components/snack-bar';
 import { usePhotoPanelStore } from 'store/panel/usePhotoPanelStore';
 
 interface PhotoPanelProps {
@@ -7,7 +8,15 @@ interface PhotoPanelProps {
 }
 
 export default function PhotoPanel({ handlePhotoClick }: PhotoPanelProps) {
-  const { photoUrl, setPhotoUrl } = usePhotoPanelStore();
+  const {
+    photoUrl,
+    setPhotoUrl,
+    selectedPhotoId,
+    setSelectedPhotoId,
+    photoObjects,
+    setPhotoObjects,
+  } = usePhotoPanelStore();
+  const [deleteSnackOpen, setDeleteSnackOpen] = useState(false);
 
   useEffect(() => {
     if (photoUrl) {
@@ -29,25 +38,59 @@ export default function PhotoPanel({ handlePhotoClick }: PhotoPanelProps) {
     }
   };
 
+  const handleDeletePhotoItem = () => {
+    const deletePhotoIndex = photoObjects.findIndex((photo) => photo.id === selectedPhotoId);
+    if (deletePhotoIndex !== -1) {
+      const updatedPhotoObjects = [
+        ...photoObjects.slice(0, deletePhotoIndex),
+        ...photoObjects.slice(deletePhotoIndex + 1),
+      ];
+      setDeleteSnackOpen(true);
+      setTimeout(() => {
+        setDeleteSnackOpen(false);
+      }, 1000);
+      setPhotoObjects(updatedPhotoObjects);
+      setSelectedPhotoId('');
+    }
+  };
+
   return (
     <div css={wrapper}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+        <p
+          style={{
+            fontSize: '14px',
+            color: selectedPhotoId ? '#2294FF' : '#D9D9D9',
+            cursor: selectedPhotoId ? 'pointer' : 'initial',
+            marginRight: '10px',
+          }}
+          onClick={handleDeletePhotoItem}
+        >
+          삭제
+        </p>
+      </div>
       <div css={contentBox}>
         <label css={title}>사진</label>
-          <input
-            type="file"
-            id="photoImage"
-            name="photoImage"
-            accept="image/*"
-            onChange={handleFileSelect}
-            style = {{
-              padding: '10px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '5px',
-              fontSize: '14px',
-              backgroundColor: '#f9f9f9',
-            }}
-          />
+        <input
+          type="file"
+          id="photoImage"
+          name="photoImage"
+          accept="image/*"
+          onChange={handleFileSelect}
+          style={{
+            padding: '10px',
+            border: '1px solid #e0e0e0',
+            borderRadius: '5px',
+            fontSize: '14px',
+            backgroundColor: '#f9f9f9',
+          }}
+        />
       </div>
+      <SnackBar
+        open={deleteSnackOpen}
+        message="사진이 삭제되었습니다."
+        onClose={() => setDeleteSnackOpen(false)}
+      />
     </div>
   );
 }

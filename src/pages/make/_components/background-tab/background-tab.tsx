@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { css } from '@emotion/react';
+import { SnackBar } from 'components/snack-bar';
 import { useBackgroundTabStore } from 'store/tab/useBackgroundTabStore';
 import { tagList } from '../constants';
-import { ResetButton } from '../reset-button';
 import { Tag } from '../tag';
+import { ToolButton } from '../tool-button';
 import BackgroundColorPanel from './background-color-panel';
 import BackgroundImagePanel from './background-image-panel';
 
@@ -18,6 +20,7 @@ const tagContainerStyle = css({
 });
 
 export default function BackgroundTab() {
+  const [openResetSnackBarOpen, setOpenResetSnackBarOpen] = useState(false);
   const {
     activeBackgroundTag,
     setActiveBackgroundTag,
@@ -38,16 +41,26 @@ export default function BackgroundTab() {
             {tag.title}
           </Tag>
         ))}
-        <ResetButton
+        <ToolButton
+          imageUrl="/svg/reset.svg"
           onClick={() => {
             setActiveBackgroundColor('');
             setActiveBackgroundImage('');
+            setOpenResetSnackBarOpen(true);
+            setTimeout(() => {
+              setOpenResetSnackBarOpen(false);
+            }, 3000);
           }}
         />
       </div>
       {/* 패널 */}
       {activeBackgroundTag === 'color' && <BackgroundColorPanel />}
       {activeBackgroundTag === 'image' && <BackgroundImagePanel />}
+      <SnackBar
+        open={openResetSnackBarOpen}
+        message="초기화가 실행되었습니다."
+        onClose={() => setOpenResetSnackBarOpen(false)}
+      />
     </>
   );
 }
