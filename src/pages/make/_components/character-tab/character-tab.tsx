@@ -27,7 +27,7 @@ const characterContainerStyle = css({
 });
 
 export default function CharacterTab() {
-  const { activeCharacterTag, setActiveCharacterTag, setActiveCharacter } = useCharacterTabStore();
+  const { activeCharacterTag, setActiveCharacterTag, activeCharacter, setActiveCharacter } = useCharacterTabStore();
   const handleCharacterClick = (src: string) => {
     setActiveCharacter(src);
   };
@@ -53,6 +53,7 @@ export default function CharacterTab() {
             key={character.id}
             imgSrc={character.src}
             onClick={() => handleCharacterClick(character.src)}
+            isActive={character.src === activeCharacter}
           />
         ))}
       </div>
