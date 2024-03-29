@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { Drawer } from 'components/drawer';
 import { Header } from 'components/header';
 import { IconButton } from 'components/icon-button';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useBrushPanelStore } from 'store/panel/useBrushPanelStore';
-import { useCanvasStore } from 'store/panel/useCanvasStore';
+import { useEraserPanelStore } from 'store/panel/useEraserPanelStore';
+import { usePhotoPanelStore } from 'store/panel/usePhotoPanelStore';
+import { useStickerPanelStore } from 'store/panel/useStickerPanelStore';
 import { useTextPanelStore } from 'store/panel/useTextPanelStore';
 import { useBackgroundTabStore } from 'store/tab/useBackgroundTabStore';
 import { useCharacterTabStore } from 'store/tab/useCharacterTabStore';
@@ -17,151 +19,691 @@ import DecorationTab from './_components/decoration-tab/decoration-tab';
 import { Tab } from './_components/tab';
 
 const Make = () => {
+  // Drawer 상태 관리
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openDrawer = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+  };
+
   const router = useRouter();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [draggingText, setDraggingText] = useState<boolean>(false);
-  const [textPosition, setTextPosition] = useState<{ x: number; y: number }>({ x: 50, y: 50 }); // Initial position
+  // 탭
   const { activeTab, setActiveTab } = useTabStore();
+  // 태그
   const { activeDecorationTag } = useDecorationTabStore();
-  const { isDrawing, setIsDrawing, brushPosition, setBrushPosition, brushColor, brushSize } =
-    useBrushPanelStore();
-  const { textContent, textColor, textSize, textFontWeight } = useTextPanelStore();
-  const { textObjects, setTextObjects } = useCanvasStore();
-  const { activeCharacter } = useCharacterTabStore();
-  const { activeBackgroundColor, activeBackgroundImage } = useBackgroundTabStore();
+  // 캐릭터
+  const { activeCharacter, setActiveCharacter } = useCharacterTabStore();
+  // 배경화면
+  const {
+    activeBackgroundColor,
+    setActiveBackgroundColor,
+    activeBackgroundImage,
+    setActiveBackgroundImage,
+  } = useBackgroundTabStore();
+  // 캔버스
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // 텍스트
+  const [textObjects, setTextObjects] = useState<
+    Array<{
+      id: string;
+      text: string;
+      x: number;
+      y: number;
+      color: string;
+      font: string;
+      dragging: boolean;
+      offsetX: number;
+      offsetY: number;
+    }>
+  >([]);
+  const [inputText, setInputText] = useState<string>('');
+  const [editText, setEditText] = useState<string>('');
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+  // 텍스트 전역 상태
+  const { textColor, textSize } = useTextPanelStore();
+  // 스티커
+  const [stickerObjects, setStickerObjects] = useState<
+    Array<{
+      id: string;
+      imageUrl: string;
+      x: number;
+      y: number;
+      dragging: boolean;
+      offsetX: number;
+      offsetY: number;
+    }>
+  >([]);
+  const [selectedStickerId, setSelectedStickerId] = useState<string | null>(null);
+  const { setActiveSticker } = useStickerPanelStore();
+  // 사진
+  const [photoObjects, setPhotoObjects] = useState<
+    Array<{
+      id: string;
+      imageUrl: string;
+      x: number;
+      y: number;
+      dragging: boolean;
+      offsetX: number;
+      offsetY: number;
+    }>
+  >([]);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
+  // 사진 전역 상태
+  const { photoUrl } = usePhotoPanelStore();
+  // 브러쉬
+  const [brushObjects, setBrushObjects] = useState<
+    Array<{
+      id: string;
+      x: number;
+      y: number;
+      dragging: boolean;
+      offsetX: number;
+      offsetY: number;
+      path: Array<{ x: number; y: number }>;
+    }>
+  >([]);
+  // 브러쉬 전역 상태
+  const { brushColor, brushSize } = useBrushPanelStore();
+  // 지우개
+  const [earaserObjects, setEaraserObjects] = useState<
+    Array<{
+      id: string;
+      x: number;
+      y: number;
+      dragging: boolean;
+      offsetX: number;
+      offsetY: number;
+      path: Array<{ x: number; y: number }>;
+    }>
+  >([]);
+  // 지우개 전역 상태
+  const { eraserSize } = useEraserPanelStore();
 
+  // 캔버스 초기화
   useEffect(() => {
-    if (!canvasRef.current) {
-      return;
+    if (canvasRef.current) {
+      setCanvas(canvasRef.current);
     }
+  }, []);
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      return;
-    }
-
-    const onMouseDown = (event: MouseEvent) => {
-      if (activeDecorationTag !== 'text') {
-        setIsDrawing(true);
-        setBrushPosition({ x: event.offsetX, y: event.offsetY });
-      } else {
-        handleTextMouseDown(event);
-      }
-    };
-
-    const onMouseMove = (event: MouseEvent) => {
-      if (activeDecorationTag !== 'text') {
-        handleBrushMouseMove(event);
-      } else {
-        handleTextMouseMove(event);
-      }
-    };
-
-    const onMouseUp = () => {
-      if (activeDecorationTag !== 'text') {
-        setIsDrawing(false);
-      } else {
-        setDraggingText(false);
-      }
-    };
-
-    canvas.addEventListener('mousedown', onMouseDown);
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mouseup', onMouseUp);
-
-    return () => {
-      canvas.removeEventListener('mousedown', onMouseDown);
-      canvas.removeEventListener('mousemove', onMouseMove);
-      canvas.removeEventListener('mouseup', onMouseUp);
-    };
-  }, [activeDecorationTag, isDrawing, brushPosition, setBrushPosition]);
-
+  // [텍스트] 텍스트 오브젝트
   useEffect(() => {
-    if (!canvasRef.current) {
-      return;
-    }
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
+    if (!canvas) {
       return;
     }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (activeDecorationTag === 'text') {
-      ctx.fillStyle = textColor;
-      ctx.font = `${textSize}px Arial`;
-      ctx.fillText(textContent, textPosition.x, textPosition.y);
-    }
-  }, [activeDecorationTag, textContent, textColor, textSize, textFontWeight, textPosition]);
-
-  const handleBrushMouseMove = (event: MouseEvent) => {
-    if (!isDrawing || !canvasRef.current) {
+    const context = canvas.getContext('2d');
+    if (!context) {
       return;
     }
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    textObjects.forEach(({ text, x, y, color, font }) => {
+      context.fillStyle = color;
+      context.font = font;
+      context.fillText(text, x, y);
+    });
+
+    stickerObjects.forEach(({ imageUrl, x, y }) => {
+      const image = new Image();
+      image.src = imageUrl;
+      image.onload = () => {
+        context.drawImage(image, x, y, 100, 100);
+      };
+    });
+
+    photoObjects.forEach(({ imageUrl, x, y }) => {
+      const image = new Image();
+      image.src = imageUrl;
+      image.onload = () => {
+        context.drawImage(image, x, y, 100, 100);
+      };
+    });
+
+    brushObjects.forEach((brushObject) => {
+      const { path } = brushObject;
+      if (path?.length < 2) {
+        return;
+      }
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeStyle = brushColor;
+      context.lineWidth = brushSize;
+      context.beginPath();
+      context.moveTo(path[0].x, path[0].y);
+      path.forEach((point) => {
+        context.lineTo(point.x, point.y);
+      });
+      context.stroke();
+    });
+
+    earaserObjects.forEach((earaserObject) => {
+      const { path } = earaserObject;
+      if (path?.length < 2) {
+        return;
+      }
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeStyle = 'white';
+      context.lineWidth = eraserSize;
+      context.beginPath();
+      context.moveTo(path[0].x, path[0].y);
+      path.forEach((point) => {
+        context.lineTo(point.x, point.y);
+      });
+      context.stroke();
+    });
+  }, [
+    canvas,
+    textObjects,
+    stickerObjects,
+    photoObjects,
+    brushObjects,
+    earaserObjects,
+    brushColor,
+    brushSize,
+    eraserSize,
+  ]);
+
+  // [텍스트] 텍스트 오브젝트 추가
+  const handleTextButtonClick = () => {
+    if (!canvas) {
+      return;
+    }
+    if (!inputText) {
       return;
     }
 
-    const currentPosition = { x: event.offsetX, y: event.offsetY };
+    const newTextObject = {
+      id: `${Date.now()}`,
+      text: inputText,
+      x: 50,
+      y: 50,
+      color: textColor,
+      font: `${textSize}px Arial`,
+      dragging: false,
+      offsetX: 0,
+      offsetY: 0,
+    };
 
-    ctx.strokeStyle = brushColor;
-    ctx.lineWidth = brushSize;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-
-    ctx.beginPath();
-    ctx.moveTo(brushPosition.x, brushPosition.y);
-    ctx.lineTo(currentPosition.x, currentPosition.y);
-    ctx.stroke();
-
-    setBrushPosition(currentPosition);
+    setTextObjects([...textObjects, newTextObject]);
+    setInputText('');
   };
 
-  const handleTextMouseDown = (event: MouseEvent) => {
-    const canvasRect = canvasRef.current?.getBoundingClientRect();
-    if (!canvasRect) {
+  // [스티커] 스티커 오브젝트 추가
+  const handleStickerClick = (stickerId: number) => {
+    if (!canvas) {
+      return;
+    }
+    let imageUrl = '';
+    switch (stickerId) {
+      case 1:
+        imageUrl = '/image/sticker/sticker-1.png';
+        break;
+      case 2:
+        imageUrl = '/image/sticker/sticker-2.png';
+        break;
+      case 3:
+        imageUrl = '/image/sticker/sticker-3.png';
+        break;
+      case 4:
+        imageUrl = '/image/sticker/sticker-4.png';
+        break;
+      case 5:
+        imageUrl = '/image/sticker/sticker-5.png';
+        break;
+      case 6:
+        imageUrl = '/image/sticker/sticker-6.png';
+        break;
+    }
+
+    const newStickerObject = {
+      id: `${Date.now()}`,
+      imageUrl: imageUrl,
+      x: 10,
+      y: 10,
+      dragging: false,
+      offsetX: 0,
+      offsetY: 0,
+    };
+    setStickerObjects([...stickerObjects, newStickerObject]);
+  };
+
+  // [사진] 사진 오브젝트 추가
+  const handlePhotoClick = () => {
+    if (!canvas) {
+      return;
+    }
+
+    const newPhotoObject = {
+      id: `${Date.now()}`,
+      imageUrl: photoUrl,
+      x: 10,
+      y: 10,
+      dragging: false,
+      offsetX: 0,
+      offsetY: 0,
+    };
+    setPhotoObjects([...photoObjects, newPhotoObject]);
+  };
+
+  // [브러쉬] 브러쉬 오브젝트 추가
+  const handleBrushClick = () => {
+    if (!canvas) {
+      return;
+    }
+
+    const newBrushObject = {
+      id: `${Date.now()}`,
+      x: 10,
+      y: 10,
+      dragging: false,
+      offsetX: 0,
+      offsetY: 0,
+      path: [],
+    };
+    setBrushObjects([...brushObjects, newBrushObject]);
+  };
+
+  // [텍스트] 텍스트 내용 입력
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(event.target.value);
+  };
+
+  // [텍스트] 텍스트 내용 수정
+  const handleEditTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditText(event.target.value);
+  };
+
+  // [텍스트] 캔버스 클릭 이벤트
+  const handleTextCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvasRect = canvas?.getBoundingClientRect();
+    if (!canvasRect || !canvas) {
       return;
     }
 
     const mouseX = event.clientX - canvasRect.left;
     const mouseY = event.clientY - canvasRect.top;
 
-    // Check if mouse is within text bounding box
-    if (
-      mouseX >= textPosition.x &&
-      mouseX <= textPosition.x + 100 && // Adjust width as needed
-      mouseY >= textPosition.y - 20 &&
-      mouseY <= textPosition.y &&
-      !draggingText
-    ) {
-      setDraggingText(true);
-    }
+    textObjects.forEach((textObject, index) => {
+      const { id, x, y, text, font } = textObject;
+      const context = canvas.getContext('2d');
+      if (!context) {
+        return;
+      }
+
+      context.font = font;
+      const textWidth = context.measureText(text).width;
+      const textHeight = parseInt(font, 10);
+
+      if (mouseX >= x && mouseX <= x + textWidth && mouseY >= y - textHeight && mouseY <= y) {
+        setEditText(text);
+        setSelectedTextId(id);
+      }
+    });
   };
 
-  const handleTextMouseMove = (event: MouseEvent) => {
-    if (!draggingText || !canvasRef.current) {
+  // [스티커] 캔버스 클릭 이벤트
+  const handleStickerCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvasRect = canvas?.getBoundingClientRect();
+    if (!canvasRect || !canvas) {
       return;
     }
 
-    const canvasRect = canvasRef.current.getBoundingClientRect();
     const mouseX = event.clientX - canvasRect.left;
     const mouseY = event.clientY - canvasRect.top;
 
-    setTextPosition({ x: mouseX, y: mouseY });
+    stickerObjects.forEach((stickerObject) => {
+      const { id, x, y } = stickerObject;
+
+      if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 100) {
+        setSelectedStickerId(id);
+      }
+    });
+  };
+
+  // [사진] 캔버스 클릭 이벤트
+  const handlePhotoCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvasRect = canvas?.getBoundingClientRect();
+    if (!canvasRect || !canvas) {
+      return;
+    }
+
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    photoObjects.forEach((photoObject) => {
+      const { id, x, y } = photoObject;
+
+      if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 100) {
+        setSelectedPhotoId(id);
+      }
+    });
+  };
+
+  // [텍스트] 텍스트 수정 확인
+  const handleEditTextConfirm = () => {
+    if (!selectedTextId) {
+      return;
+    }
+
+    const updatedTextObjects = textObjects.map((textObject) => {
+      if (textObject.id === selectedTextId) {
+        return { ...textObject, text: editText, color: textColor, font: `${textSize}px Arial` };
+      }
+      return textObject;
+    });
+    setTextObjects(updatedTextObjects);
+    setEditText('');
+    setSelectedTextId(null);
+  };
+
+  //  [텍스트] 텍스트 드래그
+  const handleTextMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    textObjects.forEach((textObject, index) => {
+      const { x, y, dragging } = textObject;
+      if (mouseX >= x && mouseX <= x + 100 && mouseY >= y - 20 && mouseY <= y && !dragging) {
+        const offsetX = mouseX - x;
+        const offsetY = mouseY - y;
+
+        const updatedTextObjects = [...textObjects];
+        updatedTextObjects[index] = {
+          ...updatedTextObjects[index],
+          dragging: true,
+          offsetX,
+          offsetY,
+        };
+        setTextObjects(updatedTextObjects);
+      }
+    });
+  };
+
+  //  [스티커] 스티커 드래그
+  const handleStickerMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    stickerObjects.forEach((stickerObject, index) => {
+      const { x, y, dragging } = stickerObject;
+      if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 100 && !dragging) {
+        const offsetX = mouseX - x;
+        const offsetY = mouseY - y;
+
+        const updatedStickerObjects = [...stickerObjects];
+        updatedStickerObjects[index] = {
+          ...updatedStickerObjects[index],
+          dragging: true,
+          offsetX,
+          offsetY,
+        };
+        setStickerObjects(updatedStickerObjects);
+      }
+    });
+  };
+
+  // [사진] 사진 드래그
+  const handlePhotoMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    photoObjects.forEach((photoObject, index) => {
+      const { x, y, dragging } = photoObject;
+      if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 100 && !dragging) {
+        const offsetX = mouseX - x;
+        const offsetY = mouseY - y;
+
+        const updatedPhotoObjects = [...photoObjects];
+        updatedPhotoObjects[index] = {
+          ...updatedPhotoObjects[index],
+          dragging: true,
+          offsetX,
+          offsetY,
+        };
+        setPhotoObjects(updatedPhotoObjects);
+      }
+    });
+  };
+
+  // [브러쉬] 브러쉬 드래그
+  const handleBrushMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    const updatedBrushObjects = [
+      ...brushObjects,
+      { path: [{ x: mouseX, y: mouseY }], dragging: true },
+    ];
+    setBrushObjects(updatedBrushObjects);
+  };
+
+  // [지우개] 지우개 드래그
+  const handleEaraserMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    const updatedEaraserObjects = [
+      ...earaserObjects,
+      { path: [{ x: mouseX, y: mouseY }], dragging: true },
+    ];
+    setEaraserObjects(updatedEaraserObjects);
+  };
+
+  //  [텍스트] 텍스트 드래그 이동
+  const handleTextMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    textObjects.forEach((textObject, index) => {
+      const { dragging, offsetX, offsetY } = textObject;
+      if (dragging) {
+        const updatedTextObjects = [...textObjects];
+        updatedTextObjects[index] = {
+          ...updatedTextObjects[index],
+          x: mouseX - offsetX,
+          y: mouseY - offsetY,
+        };
+        setTextObjects(updatedTextObjects);
+      }
+    });
+  };
+
+  //  [스티커] 스티커 드래그 이동
+  const handleStickerMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    stickerObjects.forEach((stickerObject, index) => {
+      const { dragging, offsetX, offsetY } = stickerObject;
+      if (dragging) {
+        const updatedStickerObjects = [...stickerObjects];
+        updatedStickerObjects[index] = {
+          ...updatedStickerObjects[index],
+          x: mouseX - offsetX,
+          y: mouseY - offsetY,
+        };
+        setStickerObjects(updatedStickerObjects);
+      }
+    });
+  };
+
+  //  [사진] 사진 드래그 이동
+  const handlePhotoMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    photoObjects.forEach((photoObject, index) => {
+      const { dragging, offsetX, offsetY } = photoObject;
+      if (dragging) {
+        const updatedPhotoObjects = [...photoObjects];
+        updatedPhotoObjects[index] = {
+          ...updatedPhotoObjects[index],
+          x: mouseX - offsetX,
+          y: mouseY - offsetY,
+        };
+        setPhotoObjects(updatedPhotoObjects);
+      }
+    });
+  };
+
+  //  [브러쉬] 브러쉬 드래그 이동
+  const handleBrushMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    const updatedBrushObjects = brushObjects.map((brushObject) => {
+      if (brushObject.dragging) {
+        const updatedPath = [...brushObject.path, { x: mouseX, y: mouseY }];
+        return { ...brushObject, path: updatedPath };
+      }
+      return brushObject;
+    });
+    setBrushObjects(updatedBrushObjects);
+  };
+
+  //  [지우개] 지우개 드래그 이동
+  const handleEaraserMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    const updatedEaraserObjects = earaserObjects.map((earaserObject) => {
+      if (earaserObject.dragging) {
+        const updatedPath = [...earaserObject.path, { x: mouseX, y: mouseY }];
+        return { ...earaserObject, path: updatedPath };
+      }
+      return earaserObject;
+    });
+    setEaraserObjects(updatedEaraserObjects);
+  };
+
+  //  [텍스트] 텍스트 드래그 종료
+  const handleTextMouseUp = () => {
+    const updatedTextObjects = textObjects.map((textObject) => ({
+      ...textObject,
+      dragging: false,
+    }));
+    setTextObjects(updatedTextObjects);
+  };
+
+  //  [스티커] 스티커 드래그 종료
+  const handleStickerMouseUp = () => {
+    const updatedStickerObjects = stickerObjects.map((stickerObject) => ({
+      ...stickerObject,
+      dragging: false,
+    }));
+    setStickerObjects(updatedStickerObjects);
+  };
+
+  //  [사진] 사진 드래그 종료
+  const handlePhotoMouseUp = () => {
+    const updatedPhotoObjects = photoObjects.map((photoObject) => ({
+      ...photoObject,
+      dragging: false,
+    }));
+    setPhotoObjects(updatedPhotoObjects);
+  };
+
+  //  [브러쉬] 브러쉬 드래그 종료
+  const handleBrushMouseUp = () => {
+    const updatedBrushObjects = brushObjects.map((brushObject) => ({
+      ...brushObject,
+      dragging: false,
+    }));
+    setBrushObjects(updatedBrushObjects);
+  };
+
+  //  [지우개] 지우개 드래그 종료
+  const handleEaraserMouseUp = () => {
+    const updatedEaraserObjects = earaserObjects.map((earaserObject) => ({
+      ...earaserObject,
+      dragging: false,
+    }));
+    setEaraserObjects(updatedEaraserObjects);
+  };
+
+  const handleDeleteButtonClick = () => {
+    setTextObjects([]);
+    setStickerObjects([]);
+    setPhotoObjects([]);
+    setBrushObjects([]);
+    setEaraserObjects([]);
+    setActiveCharacter('/image/character/default.png');
+    setActiveBackgroundColor('');
+    setActiveBackgroundImage('');
+    setActiveSticker('');
   };
 
   return (
     <>
       <Header
-        left={<IconButton imgSrc="/svg/back-arrow.svg" width={18} onClick={() => router.back()} />}
-        title="나작길 만들기"
-        right=""
+        left={<IconButton imgSrc="/svg/menu.svg" width={18} onClick={openDrawer} />}
+        title=""
+        right={
+          <p
+            onClick={() => router.push('/preview')}
+            style={{ fontSize: '14px', color: '#2294FF', cursor: 'pointer' }}
+          >
+            다음
+          </p>
+        }
       />
       <div
         style={{
@@ -172,28 +714,156 @@ const Make = () => {
         }}
       >
         <div style={{ position: 'relative', width: '360px', height: '360px' }}>
-          {/* Canvas */}
+          {/* 캐릭터 캔버스 */}
           <canvas
             ref={canvasRef}
             id="canvas"
             width={360}
             height={360}
             style={{
+              borderRadius: '3px',
+              boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.1)',
+              position: 'absolute',
               backgroundImage: `url(${activeCharacter})`,
               backgroundSize: 'cover',
-              position: 'absolute',
-              zIndex: 10,
+              zIndex: activeTab === 1 ? 5 : 1,
             }}
+            onClick={
+              activeDecorationTag === 'text'
+                ? handleTextCanvasClick
+                : activeDecorationTag === 'sticker'
+                  ? handleStickerCanvasClick
+                  : activeDecorationTag === 'photo'
+                    ? handlePhotoCanvasClick
+                    : activeDecorationTag === 'brush'
+                      ? handleBrushClick
+                      : undefined
+            }
+            onMouseDown={
+              activeDecorationTag === 'text'
+                ? handleTextMouseDown
+                : activeDecorationTag === 'sticker'
+                  ? handleStickerMouseDown
+                  : activeDecorationTag === 'photo'
+                    ? handlePhotoMouseDown
+                    : activeDecorationTag === 'brush'
+                      ? handleBrushMouseDown
+                      : undefined
+            }
+            onMouseMove={
+              activeDecorationTag === 'text'
+                ? handleTextMouseMove
+                : activeDecorationTag === 'sticker'
+                  ? handleStickerMouseMove
+                  : activeDecorationTag === 'photo'
+                    ? handlePhotoMouseMove
+                    : activeDecorationTag === 'brush'
+                      ? handleBrushMouseMove
+                      : undefined
+            }
+            onMouseUp={
+              activeDecorationTag === 'text'
+                ? handleTextMouseUp
+                : activeDecorationTag === 'sticker'
+                  ? handleStickerMouseUp
+                  : activeDecorationTag === 'photo'
+                    ? handlePhotoMouseUp
+                    : activeDecorationTag === 'brush'
+                      ? handleBrushMouseUp
+                      : undefined
+            }
           />
+          {/* 텍스트 캔버스 */}
+          {/* <canvas
+            ref={canvasRef}
+            id="canvas"
+            width={360}
+            height={360}
+            style={{
+              border: '1px solid black',
+              position: 'absolute',
+              zIndex: activeDecorationTag === 'text' ? 10 : 0,
+            }}
+            onClick={handleTextCanvasClick}
+            onMouseDown={handleTextMouseDown}
+            onMouseMove={handleTextMouseMove}
+            onMouseUp={handleTextMouseUp}
+          /> */}
+          {/* 스티커 캔버스 */}
+          {/* <canvas
+            ref={canvasRef}
+            id="canvas"
+            width={360}
+            height={360}
+            style={{
+              border: '1px solid black',
+              position: 'absolute',
+              zIndex: activeDecorationTag === 'sticker' ? 10 : 0,
+            }}
+            onClick={handleStickerCanvasClick}
+            onMouseDown={handleStickerMouseDown}
+            onMouseMove={handleStickerMouseMove}
+            onMouseUp={handleStickerMouseUp}
+          /> */}
+          {/* 사진 캔버스 */}
+          {/* <canvas
+            ref={canvasRef}
+            id="canvas"
+            width={360}
+            height={360}
+            style={{
+              border: '1px solid black',
+              position: 'absolute',
+              zIndex: activeDecorationTag === 'photo' ? 10 : 0,
+            }}
+            onClick={handlePhotoCanvasClick}
+            onMouseDown={handlePhotoMouseDown}
+            onMouseMove={handlePhotoMouseMove}
+            onMouseUp={handlePhotoMouseUp}
+          /> */}
+          {/* 브러쉬 & 지우개 캔버스 */}
+          {/* <canvas
+            ref={canvasRef}
+            id="canvas"
+            width={360}
+            height={360}
+            style={{
+              border: '1px solid black',
+              position: 'absolute',
+              zIndex: activeDecorationTag === 'brush' || activeDecorationTag === 'eraser' ? 10 : 0,
+            }}
+            onMouseDown={
+              activeDecorationTag === 'brush'
+                ? handleBrushMouseDown
+                : activeDecorationTag === 'eraser'
+                  ? handleEaraserMouseDown
+                  : undefined
+            }
+            onMouseMove={
+              activeDecorationTag === 'brush'
+                ? handleBrushMouseMove
+                : activeDecorationTag === 'eraser'
+                  ? handleEaraserMouseMove
+                  : undefined
+            }
+            onMouseUp={
+              activeDecorationTag === 'brush'
+                ? handleBrushMouseUp
+                : activeDecorationTag === 'eraser'
+                  ? handleEaraserMouseUp
+                  : undefined
+            }
+          /> */}
           <div
             style={{
               width: '100%',
               height: '100%',
+              borderRadius: '3px',
               background: activeBackgroundColor,
               backgroundImage: `url(${activeBackgroundImage})`,
               backgroundSize: 'cover',
               position: 'absolute',
-              zIndex: 0,
+              zIndex: 0.5,
             }}
           ></div>
         </div>
@@ -211,8 +881,22 @@ const Make = () => {
       </div>
       {/* Panels */}
       {activeTab === 1 && <CharacterTab />}
-      {activeTab === 2 && <DecorationTab />}
+      {activeTab === 2 && (
+        <DecorationTab
+          handleEditTextChange={handleEditTextChange}
+          editText={editText}
+          handleEditTextConfirm={handleEditTextConfirm}
+          handleInputChange={handleInputChange}
+          handleTextButtonClick={handleTextButtonClick}
+          inputText={inputText}
+          selectedTextId={selectedTextId}
+          handleStickerClick={handleStickerClick}
+          handlePhotoClick={handlePhotoClick}
+          handleDeleteButtonClick={handleDeleteButtonClick}
+        />
+      )}
       {activeTab === 3 && <BackgroundTab />}
+      <Drawer isOpen={isDrawerOpen} onClose={closeDrawer} />
     </>
   );
 };
