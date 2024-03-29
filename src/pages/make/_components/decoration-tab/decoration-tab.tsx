@@ -4,6 +4,8 @@ import { tagList } from '../constants';
 import { ResetButton } from '../reset-button';
 import { Tag } from '../tag';
 import BrushPanel from './brush-panel/brush-panel';
+import EraserPanel from './eraser-panel/eraser-panel';
+import PhotoPanel from './photo-panel/photo-panel';
 import StickerPanel from './sticker-panel/sticker-panel';
 import TextPanel from './text-panel/text-panel';
 
@@ -18,9 +20,32 @@ const tagContainerStyle = css({
   borderBottom: '5px solid #e0e0e0',
 });
 
-export default function DecorationTab() {
+interface DecorationTabProps {
+  handleEditTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  editText: string;
+  handleEditTextConfirm: () => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleTextButtonClick: () => void;
+  inputText: string;
+  selectedTextId: string | null;
+  handleStickerClick: (stickerId: number) => void;
+  handlePhotoClick: () => void;
+  handleDeleteButtonClick: () => void;
+}
+
+export default function DecorationTab({
+  handleEditTextChange,
+  editText,
+  handleEditTextConfirm,
+  handleInputChange,
+  handleTextButtonClick,
+  inputText,
+  selectedTextId,
+  handleStickerClick,
+  handlePhotoClick,
+  handleDeleteButtonClick,
+}: DecorationTabProps) {
   const { activeDecorationTag, setActiveDecorationTag } = useDecorationTabStore();
-  console.log('꾸미기 태그', activeDecorationTag);
   return (
     <>
       {/* 태그 */}
@@ -35,14 +60,26 @@ export default function DecorationTab() {
             {tag.title}
           </Tag>
         ))}
-        <ResetButton onClick={() => console.log('리셋')} />
+        <ResetButton onClick={handleDeleteButtonClick} />
       </div>
       {/* 패널 */}
-      {activeDecorationTag === 'text' && <TextPanel />}
-      {activeDecorationTag === 'sticker' && <StickerPanel />}
-      {activeDecorationTag === 'photo' && <div>사진 패널</div>}
+      {activeDecorationTag === 'text' && (
+        <TextPanel
+          handleEditTextChange={handleEditTextChange}
+          editText={editText}
+          handleEditTextConfirm={handleEditTextConfirm}
+          handleInputChange={handleInputChange}
+          handleTextButtonClick={handleTextButtonClick}
+          inputText={inputText}
+          selectedTextId={selectedTextId}
+        />
+      )}
+      {activeDecorationTag === 'sticker' && (
+        <StickerPanel handleStickerClick={handleStickerClick} />
+      )}
+      {activeDecorationTag === 'photo' && <PhotoPanel handlePhotoClick={handlePhotoClick} />}
       {activeDecorationTag === 'brush' && <BrushPanel />}
-      {activeDecorationTag === 'eraser' && <div>지우개 패널</div>}
+      {activeDecorationTag === 'eraser' && <EraserPanel />}
     </>
   );
 }
