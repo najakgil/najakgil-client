@@ -158,4 +158,7 @@ export const globals = css`
     user-select: none;
     background-color: #f5f5f5;
   }
+  input:focus {
+    outline: none;
+  }
 `;
