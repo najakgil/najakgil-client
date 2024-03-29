@@ -6,6 +6,6 @@ type StickerPanel = {
 };
 
 export const useStickerPanelStore = create<StickerPanel>((set) => ({
-  activeSticker: '/image/sticker/sticker-1.png',
+  activeSticker: '',
   setActiveSticker: (activeSticker) => set({ activeSticker }),
 }));
