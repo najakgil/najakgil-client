@@ -25,7 +25,7 @@ export const characterTagList = [
   'mhanbok',
 ] as const;
 
-export const decorationTagList = ['text', 'sticker', 'photo', 'brush', 'eraser'] as const;
+export const decorationTagList = ['text', 'sticker', 'photo', 'brush'] as const;
 
 export const backgroundTagList = ['color', 'image'] as const;
 
@@ -91,11 +91,6 @@ export const tagList: {
       id: 4,
       tag: 'brush',
       title: '펜',
-    },
-    {
-      id: 5,
-      tag: 'eraser',
-      title: '지우개',
     },
   ],
   background: [
