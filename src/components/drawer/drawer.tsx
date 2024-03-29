@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { BottomSheet } from 'components/bottom-sheet/bottom-sheet';
-import { Button } from 'components/button';
+// import { BottomSheet } from 'components/bottom-sheet/bottom-sheet';
+// import { Button } from 'components/button';
 import { AnimatePresence, motion } from 'framer-motion';
-import Image from 'next/image';
+import { useRouter } from 'next/router';
+// import Image from 'next/image';
 
 const motionStyle = css({
   position: 'absolute',
@@ -27,6 +28,7 @@ const baseStyle = css({
 
 const headerStyle = css({
   height: '39px',
+  marginBottom: '20px',
   img: {
     cursor: 'pointer',
   },
@@ -38,44 +40,46 @@ const buttonStyle = css({
   height: '56px',
   display: 'flex',
   alignItems: 'center',
+  fontSize: '20px',
+  margin: '10px 0px',
 });
 
-const accountStyle = css({
-  display: 'flex',
-  // TO DO: margin-top 임의 값 수정 필요
-  marginTop: '360px',
-  gap: '40px',
-});
+// const accountStyle = css({
+//   display: 'flex',
+//   // TO DO: margin-top 임의 값 수정 필요
+//   marginTop: '360px',
+//   gap: '40px',
+// });
 
-const accountButtonStyle = css({
-  color: 'rgba(255, 255, 255, 0.5)',
-  fontSize: '15px',
-  cursor: 'pointer',
-});
+// const accountButtonStyle = css({
+//   color: 'rgba(255, 255, 255, 0.5)',
+//   fontSize: '15px',
+//   cursor: 'pointer',
+// });
 
-const accountButtonBoxStyle = css({
-  display: 'flex',
-  padding: '18px 0px',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '10px',
-  cursor: 'pointer',
-});
+// const accountButtonBoxStyle = css({
+//   display: 'flex',
+//   padding: '18px 0px',
+//   alignItems: 'center',
+//   justifyContent: 'space-between',
+//   gap: '10px',
+//   cursor: 'pointer',
+// });
 
-const kakaoButtonStyle = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '100%',
-  height: '56px',
-  borderRadius: '16px',
-  backgroundColor: '#fee500',
-  color: '#000000',
-  fontSize: '15px',
-  fontWeight: 600,
-  cursor: 'pointer',
-  gap: '28px',
-});
+// const kakaoButtonStyle = css({
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   width: '100%',
+//   height: '56px',
+//   borderRadius: '16px',
+//   backgroundColor: '#fee500',
+//   color: '#000000',
+//   fontSize: '15px',
+//   fontWeight: 600,
+//   cursor: 'pointer',
+//   gap: '28px',
+// });
 
 interface DrawerProps {
   isOpen: boolean;
@@ -94,16 +98,16 @@ const navigationList: TabType[] = [
     name: 'make',
     title: '나작길 만들기',
   },
-  {
-    id: '2',
-    name: 'goods',
-    title: '나작길 굿즈함',
-  },
-  {
-    id: '3',
-    name: 'storage',
-    title: '나작길 수납함',
-  },
+  // {
+  //   id: '2',
+  //   name: 'goods',
+  //   title: '나작길 굿즈함',
+  // },
+  // {
+  //   id: '3',
+  //   name: 'storage',
+  //   title: '나작길 수납함',
+  // },
   {
     id: '4',
     name: 'contact',
@@ -112,13 +116,14 @@ const navigationList: TabType[] = [
 ];
 
 export default function Drawer({ isOpen, onClose }: DrawerProps) {
-  const jwtToken = false;
-  const kakaoLogin = () => {
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env
-      .NEXT_PUBLIC_KAKAO_REST_API_KEY!}&redirect_uri=${
-      process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI
-    }&response_type=code`;
-  };
+  // const jwtToken = false;
+  // const kakaoLogin = () => {
+  //   window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env
+  //     .NEXT_PUBLIC_KAKAO_REST_API_KEY!}&redirect_uri=${
+  //     process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI
+  //   }&response_type=code`;
+  // };
+  const router = useRouter();
 
   return (
     <AnimatePresence>
@@ -142,13 +147,35 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
                 transition={{ duration: 1.3, ease: 'easeInOut' }}
                 css={buttonStyle}
                 onClick={() => {
+                  if (tab.name === 'make') {
+                    router.push(`/${tab.name}`);
+                  }
                   onClose();
                 }}
               >
-                <p>{tab.title}</p>
+                {tab.name === 'make' ? (
+                  <p>{tab.title}</p>
+                ) : (
+                  <div style={{ display: 'flex', gap: '5px', alignItems: 'baseline' }}>
+                    <p>{tab.title}</p>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() =>
+                        router.push(
+                          'https://www.instagram.com/my_precious.gil?igsh=ejl5dWk1NHA0cmZu&utm_source=qr',
+                        )
+                      }
+                    >
+                      @my_precious.gil
+                    </p>
+                  </div>
+                )}
               </motion.div>
             ))}
-            <div css={accountStyle}>
+            {/* <div css={accountStyle}>
               {jwtToken ? (
                 <motion.div
                   initial={{ opacity: 0, y: 0 }}
@@ -218,7 +245,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
                   </BottomSheet.Root>
                 </motion.div>
               )}
-            </div>
+            </div> */}
           </div>
         </motion.div>
       )}
