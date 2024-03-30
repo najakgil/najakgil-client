@@ -11,11 +11,11 @@ import { useBackgroundTabStore } from 'store/tab/useBackgroundTabStore';
 import { useCharacterTabStore } from 'store/tab/useCharacterTabStore';
 import { useDecorationTabStore } from 'store/tab/useDecorationTabStore';
 import { useTabStore } from 'store/useTabStore';
-import BackgroundTab from './_components/background-tab/background-tab';
-import CharacterTab from './_components/character-tab/character-tab';
-import { tabList } from './_components/constants';
-import DecorationTab from './_components/decoration-tab/decoration-tab';
-import Tab from './_components/tab/tab';
+import BackgroundTab from '../../components/make-components/background-tab/background-tab';
+import CharacterTab from '../../components/make-components/character-tab/character-tab';
+import { tabList } from '../../components/make-components/constants';
+import DecorationTab from '../../components/make-components/decoration-tab/decoration-tab';
+import Tab from '../../components/make-components/tab/tab';
 
 const Make = () => {
   // Drawer 상태 관리

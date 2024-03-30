@@ -1,4 +1,4 @@
-import { CharacterTag } from 'pages/make/_components/type';
+import { CharacterTag } from 'components/make-components/type';
 import { create } from 'zustand';
 
 // 캐릭터 탭 상태 관리
