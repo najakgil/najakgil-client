@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/react';
+import { SnackBar } from 'components/snack-bar';
 import { useBrushPanelStore } from 'store/panel/useBrushPanelStore';
 
 export default function BrushPanel() {
-  const { brushColor, setBrushColor, brushSize, setBrushSize } = useBrushPanelStore();
+  const [backSnackOpen, setBackSnackOpen] = useState(false);
+  const { brushColor, setBrushColor, brushSize, setBrushSize, brushObjects, setBrushObjects } =
+    useBrushPanelStore();
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBrushColor(event.target.value);
   };
@@ -12,8 +15,32 @@ export default function BrushPanel() {
     setBrushSize(parseInt(event.target.value));
   };
 
+  const handleBackButtonClick = () => {
+    const latestBrushObject = brushObjects[brushObjects.length - 1];
+    const updatedBrushObjects = brushObjects.filter(
+      (brushObject) => brushObject.id !== latestBrushObject.id,
+    );
+    setBrushObjects(updatedBrushObjects);
+    setBackSnackOpen(true);
+    setTimeout(() => {
+      setBackSnackOpen(false);
+    }, 1000);
+  };
+
   return (
     <div css={wrapper}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+        <p
+          style={{
+            fontSize: '14px',
+            color: '#AEAEAE',
+            cursor: 'pointer',
+          }}
+          onClick={handleBackButtonClick}
+        >
+          이전
+        </p>
+      </div>
       <div css={contentBox}>
         <label css={title}>펜 색상</label>
         <input
@@ -36,6 +63,11 @@ export default function BrushPanel() {
           onChange={handleSizeChange}
         />
       </div>
+      <SnackBar
+        message="이전으로 돌아갔습니다."
+        open={backSnackOpen}
+        onClose={() => setBackSnackOpen(false)}
+      />
     </div>
   );
 }
