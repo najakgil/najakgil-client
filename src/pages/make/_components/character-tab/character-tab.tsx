@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { ItemBox } from 'components/item-box';
 import { useCharacterTabStore } from 'store/tab/useCharacterTabStore';
 import { characterImageSrc, tagList } from '../constants';
-import { Tag } from '../tag';
+import Tag from '../tag/tag';
 
 const tagContainerStyle = css({
   width: '100%',
@@ -27,7 +27,8 @@ const characterContainerStyle = css({
 });
 
 export default function CharacterTab() {
-  const { activeCharacterTag, setActiveCharacterTag, activeCharacter, setActiveCharacter } = useCharacterTabStore();
+  const { activeCharacterTag, setActiveCharacterTag, activeCharacter, setActiveCharacter } =
+    useCharacterTabStore();
   const handleCharacterClick = (src: string) => {
     setActiveCharacter(src);
   };

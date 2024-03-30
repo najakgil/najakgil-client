@@ -3,10 +3,10 @@ import { css } from '@emotion/react';
 import { SnackBar } from 'components/snack-bar';
 import { useBackgroundTabStore } from 'store/tab/useBackgroundTabStore';
 import { tagList } from '../constants';
-import { Tag } from '../tag';
-import { ToolButton } from '../tool-button';
 import BackgroundColorPanel from './background-color-panel';
 import BackgroundImagePanel from './background-image-panel';
+import Tag from '../tag/tag';
+import ToolButton from '../tool-button/tool-button';
 
 const tagContainerStyle = css({
   width: '100%',

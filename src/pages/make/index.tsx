@@ -15,7 +15,7 @@ import BackgroundTab from './_components/background-tab/background-tab';
 import CharacterTab from './_components/character-tab/character-tab';
 import { tabList } from './_components/constants';
 import DecorationTab from './_components/decoration-tab/decoration-tab';
-import { Tab } from './_components/tab';
+import Tab from './_components/tab/tab';
 
 const Make = () => {
   // Drawer 상태 관리
