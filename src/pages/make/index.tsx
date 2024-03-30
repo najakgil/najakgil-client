@@ -37,10 +37,7 @@ const Make = () => {
   // 캐릭터
   const { activeCharacter } = useCharacterTabStore();
   // 배경화면
-  const {
-    activeBackgroundColor,
-    activeBackgroundImage,
-  } = useBackgroundTabStore();
+  const { activeBackgroundColor, activeBackgroundImage } = useBackgroundTabStore();
   // 캔버스
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -58,11 +55,9 @@ const Make = () => {
     textSize,
   } = useTextPanelStore();
   // 스티커
-  const { stickerObjects, setStickerObjects, setSelectedStickerId } =
-    useStickerPanelStore();
+  const { stickerObjects, setStickerObjects, setSelectedStickerId } = useStickerPanelStore();
   // 사진
-  const { photoObjects, setPhotoObjects, setSelectedPhotoId, photoUrl } =
-    usePhotoPanelStore();
+  const { photoObjects, setPhotoObjects, setSelectedPhotoId, photoUrl } = usePhotoPanelStore();
   // 브러쉬
   const { brushObjects, setBrushObjects, brushColor, brushSize } = useBrushPanelStore();
 
@@ -124,15 +119,7 @@ const Make = () => {
       });
       context.stroke();
     });
-  }, [
-    canvas,
-    textObjects,
-    stickerObjects,
-    photoObjects,
-    brushObjects,
-    brushColor,
-    brushSize,
-  ]);
+  }, [canvas, textObjects, stickerObjects, photoObjects, brushObjects, brushColor, brushSize]);
 
   // [텍스트] 텍스트 오브젝트 추가
   const handleTextButtonClick = () => {

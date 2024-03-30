@@ -1,11 +1,10 @@
-import { CharacterTagList } from 'pages/make/_components/type';
+import { CharacterTag } from 'pages/make/_components/type';
 import { create } from 'zustand';
-
 
 // 캐릭터 탭 상태 관리
 type CharacterTab = {
-  activeCharacterTag: CharacterTagList;
-  setActiveCharacterTag: (activeTag: CharacterTagList) => void;
+  activeCharacterTag: CharacterTag;
+  setActiveCharacterTag: (activeTag: CharacterTag) => void;
   activeCharacter: string;
   setActiveCharacter: (activeCharacter: string) => void;
 };

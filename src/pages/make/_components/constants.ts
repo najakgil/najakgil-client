@@ -1,4 +1,4 @@
-import { BackgroundTagList, CharacterTagList, DecorationTagList } from './type';
+import { BackgroundTag, CharacterTag, DecorationTag, Tag } from './type';
 
 export const tabList = [
   {
@@ -30,9 +30,9 @@ export const decorationTagList = ['text', 'sticker', 'photo', 'brush'] as const;
 export const backgroundTagList = ['color', 'image'] as const;
 
 export const tagList: {
-  character: { id: number; tag: CharacterTagList; title: string }[];
-  decoration: { id: number; tag: DecorationTagList; title: string }[];
-  background: { id: number; tag: BackgroundTagList; title: string }[];
+  character: Tag<CharacterTag>[];
+  decoration: Tag<DecorationTag>[];
+  background: Tag<BackgroundTag>[];
 } = {
   character: [
     {
