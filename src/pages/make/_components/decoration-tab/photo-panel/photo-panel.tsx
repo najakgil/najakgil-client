@@ -22,7 +22,7 @@ export default function PhotoPanel({ handlePhotoClick }: PhotoPanelProps) {
     if (photoUrl) {
       handlePhotoClick();
     }
-  }, [photoUrl]);
+  }, [handlePhotoClick, photoUrl]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

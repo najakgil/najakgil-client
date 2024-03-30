@@ -53,47 +53,12 @@ export default function DecorationTab({
   const [openBackSnackBarOpen, setOpenBackSnackBarOpen] = useState(false);
   const [openResetSnackBarOpen, setOpenResetSnackBarOpen] = useState(false);
   const { activeDecorationTag, setActiveDecorationTag } = useDecorationTabStore();
-  const { textObjects, setTextObjects, setSelectedTextId, setInputText, setEditText } =
-    useTextPanelStore();
-  const { stickerObjects, setStickerObjects, setActiveSticker } = useStickerPanelStore();
-  const { photoObjects, setPhotoObjects, setPhotoUrl } = usePhotoPanelStore();
-  const { brushObjects, setBrushObjects } = useBrushPanelStore();
+  const { setTextObjects, setInputText, setEditText } = useTextPanelStore();
+  const { setStickerObjects, setActiveSticker } = useStickerPanelStore();
+  const { setPhotoObjects, setPhotoUrl } = usePhotoPanelStore();
+  const { setBrushObjects } = useBrushPanelStore();
   const { setActiveCharacter } = useCharacterTabStore();
   const { setActiveBackgroundColor, setActiveBackgroundImage } = useBackgroundTabStore();
-
-  const handleBackButtonClick = () => {
-    if (activeDecorationTag === 'text') {
-      const latestTextObject = textObjects[textObjects.length - 1];
-      const updatedTextObjects = textObjects.filter(
-        (textObject) => textObject.id !== latestTextObject.id,
-      );
-      setTextObjects(updatedTextObjects);
-      setSelectedTextId('');
-    } else if (activeDecorationTag === 'sticker') {
-      const latestStickerObject = stickerObjects[stickerObjects.length - 1];
-      const updatedStickerObjects = stickerObjects.filter(
-        (stickerObject) => stickerObject.id !== latestStickerObject.id,
-      );
-      setStickerObjects(updatedStickerObjects);
-      setActiveSticker('');
-    } else if (activeDecorationTag === 'photo') {
-      const latestPhotoObject = photoObjects[photoObjects.length - 1];
-      const updatedPhotoObjects = photoObjects.filter(
-        (photoObject) => photoObject.id !== latestPhotoObject.id,
-      );
-      setPhotoObjects(updatedPhotoObjects);
-    } else if (activeDecorationTag === 'brush') {
-      const latestBrushObject = brushObjects[brushObjects.length - 1];
-      const updatedBrushObjects = brushObjects.filter(
-        (brushObject) => brushObject.id !== latestBrushObject.id,
-      );
-      setBrushObjects(updatedBrushObjects);
-    }
-    setOpenBackSnackBarOpen(true);
-    setTimeout(() => {
-      setOpenBackSnackBarOpen(false);
-    }, 3000);
-  };
 
   const handleResetButtonClick = () => {
     setTextObjects([]);
@@ -101,7 +66,7 @@ export default function DecorationTab({
     setPhotoObjects([]);
     setBrushObjects([]);
     setActiveCharacter('/image/character/default.png');
-    setActiveBackgroundColor('');
+    setActiveBackgroundColor('#FFF5F5');
     setActiveBackgroundImage('');
     setInputText('');
     setEditText('');
@@ -127,7 +92,6 @@ export default function DecorationTab({
             {tag.title}
           </Tag>
         ))}
-        <ToolButton imageUrl="/svg/back.svg" onClick={handleBackButtonClick} />
         <ToolButton imageUrl="/svg/reset.svg" onClick={handleResetButtonClick} />
       </div>
       {/* 패널 */}
