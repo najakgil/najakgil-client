@@ -100,14 +100,14 @@ const PreviewPage = () => {
     }
   };
 
-  const copyLink = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    setCopySnackBarOpen(true);
-    setTimeout(() => {
-      setCopySnackBarOpen(false);
-    }, 3000);
-  };
+  // const copyLink = () => {
+  //   const url = window.location.href;
+  //   navigator.clipboard.writeText(url);
+  //   setCopySnackBarOpen(true);
+  //   setTimeout(() => {
+  //     setCopySnackBarOpen(false);
+  //   }, 3000);
+  // };
 
   return (
     <>
@@ -171,9 +171,9 @@ const PreviewPage = () => {
           <Button variants="primary" onClick={downloadImage}>
             다운로드
           </Button>
-          <Button variants="secondary" onClick={copyLink}>
+          {/* <Button variants="secondary" onClick={copyLink}>
             링크 복사하기
-          </Button>
+          </Button> */}
         </div>
       </div>
       <SnackBar
