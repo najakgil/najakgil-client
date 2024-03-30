@@ -36,7 +36,7 @@ export const useTextPanelStore = create<TextPanel>((set) => ({
     setEditText: (text) => set({editText: text}),
     selectedTextId: '',
     setSelectedTextId: (id) => set({selectedTextId: id}),
-    textColor: 'black',
+    textColor: '#1E212B',
     setTextColor: (color) => set({textColor: color}),
     textSize: 16,
     setTextSize: (size) => set({textSize: size}),

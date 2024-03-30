@@ -22,7 +22,7 @@ type BrushPanel = {
 export const useBrushPanelStore = create<BrushPanel>((set) => ({
   brushObjects: [],
   setBrushObjects: (objects) => set({ brushObjects: objects }),
-  brushColor: "white",
+  brushColor: "#FFFFFF",
   setBrushColor: (color) => set({ brushColor: color }),
   brushSize: 10,
   setBrushSize: (size) => set({ brushSize: size }),

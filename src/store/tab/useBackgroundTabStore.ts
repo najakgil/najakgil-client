@@ -15,7 +15,7 @@ export const useBackgroundTabStore = create<BackgroundTab>((set) => ({
   activeBackgroundTag: 'color',
   setActiveBackgroundTag: (activeBackgroundTag) => set({ activeBackgroundTag }),
   // 배경화면 색상
-  activeBackgroundColor: 'pink',
+  activeBackgroundColor: '#FFF5F5',
   setActiveBackgroundColor: (activeBackgroundColor) => set({ activeBackgroundColor }),
   // 배경화면 이미지
   activeBackgroundImage: '/image/background/default.png',
