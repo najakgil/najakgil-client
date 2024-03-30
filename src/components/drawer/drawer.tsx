@@ -123,7 +123,13 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
   //     process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI
   //   }&response_type=code`;
   // };
+
   const router = useRouter();
+  const href = 'https://www.instagram.com/my_precious.gil?igsh=ejl5dWk1NHA0cmZu&utm_source=qr';
+
+  const handleInstagram = () => {
+    window.open(href, '_blank');
+  };
 
   return (
     <AnimatePresence>
@@ -163,11 +169,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
                         fontSize: '13px',
                         cursor: 'pointer',
                       }}
-                      onClick={() =>
-                        router.push(
-                          'https://www.instagram.com/my_precious.gil?igsh=ejl5dWk1NHA0cmZu&utm_source=qr',
-                        )
-                      }
+                      onClick={handleInstagram}
                     >
                       @my_precious.gil
                     </p>
