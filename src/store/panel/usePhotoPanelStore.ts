@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type PhotoObjcet = {
+type PhotoObject = {
   id: string;
   imageUrl: string;
   x: number;
@@ -11,8 +11,8 @@ type PhotoObjcet = {
 };
 
 type PhotoPanel = {
-  photoObjects: PhotoObjcet[];
-  setPhotoObjects: (objects: PhotoObjcet[]) => void;
+  photoObjects: PhotoObject[];
+  setPhotoObjects: (objects: PhotoObject[]) => void;
   selectedPhotoId: string;
   setSelectedPhotoId: (id: string) => void;
   photoUrl: string;
