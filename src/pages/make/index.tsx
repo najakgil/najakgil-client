@@ -241,6 +241,35 @@ const Make = () => {
     });
   };
 
+  // [텍스트] 텍스트 캔버스 터치 이벤트
+  const handleTextCanvasTouch = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    const canvasRect = canvas?.getBoundingClientRect();
+    if (!canvasRect || !canvas) {
+      return;
+    }
+
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    textObjects.forEach((textObject) => {
+      const { id, x, y, text, font } = textObject;
+      const context = canvas.getContext('2d');
+      if (!context) {
+        return;
+      }
+
+      context.font = font;
+      const textWidth = context.measureText(text).width;
+      const textHeight = parseInt(font, 10);
+
+      if (touchX >= x && touchX <= x + textWidth && touchY >= y - textHeight && touchY <= y) {
+        setEditText(text);
+        setSelectedTextId(id);
+      }
+    });
+  };
+
   // [스티커] 캔버스 클릭 이벤트
   const handleStickerCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvasRect = canvas?.getBoundingClientRect();
@@ -255,6 +284,26 @@ const Make = () => {
       const { id, x, y } = stickerObject;
 
       if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 100) {
+        setSelectedStickerId(id);
+      }
+    });
+  };
+
+  // [스티커] 스티커 캔버스 터치 이벤트
+  const handleStickerCanvasTouch = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    const canvasRect = canvas?.getBoundingClientRect();
+    if (!canvasRect || !canvas) {
+      return;
+    }
+
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    stickerObjects.forEach((stickerObject) => {
+      const { id, x, y } = stickerObject;
+
+      if (touchX >= x && touchX <= x + 100 && touchY >= y && touchY <= y + 100) {
         setSelectedStickerId(id);
       }
     });
@@ -277,6 +326,50 @@ const Make = () => {
         setSelectedPhotoId(id);
       }
     });
+  };
+
+  // [사진] 사진 캔버스 터치 이벤트
+  const handlePhotoCanvasTouch = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    const canvasRect = canvas?.getBoundingClientRect();
+    if (!canvasRect || !canvas) {
+      return;
+    }
+
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    photoObjects.forEach((photoObject) => {
+      const { id, x, y } = photoObject;
+
+      if (touchX >= x && touchX <= x + 100 && touchY >= y && touchY <= y + 100) {
+        setSelectedPhotoId(id);
+      }
+    });
+  };
+
+  // [브러쉬] 브러쉬 캔버스 터치 이벤트
+  const handleBrushCanvasTouch = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    const newBrushObject = {
+      id: `${Date.now()}`,
+      x: touchX,
+      y: touchY,
+      dragging: true,
+      offsetX: 0,
+      offsetY: 0,
+      path: [{ x: touchX, y: touchY }],
+    };
+    const updatedBrushObjects = [...brushObjects, newBrushObject];
+    setBrushObjects(updatedBrushObjects);
   };
 
   // [텍스트] 텍스트 수정 확인
@@ -324,6 +417,31 @@ const Make = () => {
     });
   };
 
+  // [텍스트] 텍스트 캔버스 터치 이동 이벤트
+  const handleTextCanvasTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    textObjects.forEach((textObject, index) => {
+      const { dragging, offsetX, offsetY } = textObject;
+      if (dragging) {
+        const updatedTextObjects = [...textObjects];
+        updatedTextObjects[index] = {
+          ...updatedTextObjects[index],
+          x: touchX - offsetX,
+          y: touchY - offsetY,
+        };
+        setTextObjects(updatedTextObjects);
+      }
+    });
+  };
+
   //  [스티커] 스티커 드래그
   const handleStickerMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvas) {
@@ -352,6 +470,31 @@ const Make = () => {
     });
   };
 
+  // [스티커] 스티커 캔버스 터치 이동 이벤트
+  const handleStickerCanvasTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    stickerObjects.forEach((stickerObject, index) => {
+      const { dragging, offsetX, offsetY } = stickerObject;
+      if (dragging) {
+        const updatedStickerObjects = [...stickerObjects];
+        updatedStickerObjects[index] = {
+          ...updatedStickerObjects[index],
+          x: touchX - offsetX,
+          y: touchY - offsetY,
+        };
+        setStickerObjects(updatedStickerObjects);
+      }
+    });
+  };
+
   // [사진] 사진 드래그
   const handlePhotoMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvas) {
@@ -374,6 +517,31 @@ const Make = () => {
           dragging: true,
           offsetX,
           offsetY,
+        };
+        setPhotoObjects(updatedPhotoObjects);
+      }
+    });
+  };
+
+  // [사진] 사진 캔버스 터치 이동 이벤트
+  const handlePhotoCanvasTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    photoObjects.forEach((photoObject, index) => {
+      const { dragging, offsetX, offsetY } = photoObject;
+      if (dragging) {
+        const updatedPhotoObjects = [...photoObjects];
+        updatedPhotoObjects[index] = {
+          ...updatedPhotoObjects[index],
+          x: touchX - offsetX,
+          y: touchY - offsetY,
         };
         setPhotoObjects(updatedPhotoObjects);
       }
@@ -418,6 +586,26 @@ const Make = () => {
       path: [{ x: mouseX, y: mouseY }],
     };
     const updatedBrushObjects = [...brushObjects, newBrushObject];
+    setBrushObjects(updatedBrushObjects);
+  };
+
+  const handleBrushCanvasTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvas) {
+      return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvasRect.left;
+    const touchY = touch.clientY - canvasRect.top;
+
+    const updatedBrushObjects = brushObjects.map((brushObject) => {
+      if (brushObject.dragging) {
+        const updatedPath = [...brushObject.path, { x: touchX, y: touchY }];
+        return { ...brushObject, path: updatedPath };
+      }
+      return brushObject;
+    });
     setBrushObjects(updatedBrushObjects);
   };
 
@@ -522,8 +710,26 @@ const Make = () => {
     setTextObjects(updatedTextObjects);
   };
 
+  // [텍스트] 텍스트 캔버스 터치 종료 이벤트
+  const handleTextCanvasTouchEnd = () => {
+    const updatedTextObjects = textObjects.map((textObject) => ({
+      ...textObject,
+      dragging: false,
+    }));
+    setTextObjects(updatedTextObjects);
+  };
+
   //  [스티커] 스티커 드래그 종료
   const handleStickerMouseUp = () => {
+    const updatedStickerObjects = stickerObjects.map((stickerObject) => ({
+      ...stickerObject,
+      dragging: false,
+    }));
+    setStickerObjects(updatedStickerObjects);
+  };
+
+  // [스티커] 스티커 캔버스 터치 종료 이벤트
+  const handleStickerCanvasTouchEnd = () => {
     const updatedStickerObjects = stickerObjects.map((stickerObject) => ({
       ...stickerObject,
       dragging: false,
@@ -540,8 +746,26 @@ const Make = () => {
     setPhotoObjects(updatedPhotoObjects);
   };
 
+  // [사진] 사진 캔버스 터치 종료 이벤트
+  const handlePhotoCanvasTouchEnd = () => {
+    const updatedPhotoObjects = photoObjects.map((photoObject) => ({
+      ...photoObject,
+      dragging: false,
+    }));
+    setPhotoObjects(updatedPhotoObjects);
+  };
+
   //  [브러쉬] 브러쉬 드래그 종료
   const handleBrushMouseUp = () => {
+    const updatedBrushObjects = brushObjects.map((brushObject) => ({
+      ...brushObject,
+      dragging: false,
+    }));
+    setBrushObjects(updatedBrushObjects);
+  };
+
+  // [브러쉬] 브러쉬 캔버스 터치 종료 이벤트
+  const handleBrushCanvasTouchEnd = () => {
     const updatedBrushObjects = brushObjects.map((brushObject) => ({
       ...brushObject,
       dragging: false,
@@ -628,6 +852,39 @@ const Make = () => {
                     : activeDecorationTag === 'brush'
                       ? handleBrushMouseUp
                       : undefined
+            }
+            onTouchStart={
+              activeDecorationTag === 'text'
+               ? handleTextCanvasTouch
+               : activeDecorationTag === 'sticker'
+                ? handleStickerCanvasTouch
+                : activeDecorationTag === 'photo'
+                 ? handlePhotoCanvasTouch
+                 : activeDecorationTag === 'brush'
+                  ? handleBrushCanvasTouch
+                  : undefined
+            }
+            onTouchMove={
+              activeDecorationTag === 'text'
+               ? handleTextCanvasTouchMove
+               : activeDecorationTag === 'sticker'
+                ? handleStickerCanvasTouchMove
+                : activeDecorationTag === 'photo'
+                 ? handlePhotoCanvasTouchMove
+                 : activeDecorationTag === 'brush'
+                  ? handleBrushCanvasTouchMove
+                  : undefined
+            }
+            onTouchEnd={
+              activeDecorationTag === 'text'
+              ? handleTextCanvasTouchEnd
+              : activeDecorationTag === 'sticker'
+               ? handleStickerCanvasTouchEnd
+               : activeDecorationTag === 'photo'
+                ? handlePhotoCanvasTouchEnd
+                : activeDecorationTag === 'brush'
+                 ? handleBrushCanvasTouchEnd
+                 : undefined
             }
           />
           <div
