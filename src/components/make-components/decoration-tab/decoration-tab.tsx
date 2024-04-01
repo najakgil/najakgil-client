@@ -109,7 +109,7 @@ export default function DecorationTab({
       {activeDecorationTag === 'sticker' && (
         <StickerPanel handleStickerClick={handleStickerClick} />
       )}
-      {activeDecorationTag === 'photo' && <PhotoPanel handlePhotoClick={handlePhotoClick} />}
+      {activeDecorationTag === 'photo' && <PhotoPanel handlePhotoClick={handlePhotoClick}/>}
       {activeDecorationTag === 'brush' && <BrushPanel />}
       <SnackBar
         open={openBackSnackBarOpen}
