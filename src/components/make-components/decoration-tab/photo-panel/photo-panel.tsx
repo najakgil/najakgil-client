@@ -3,13 +3,9 @@ import { css } from '@emotion/react';
 import { SnackBar } from 'components/snack-bar';
 import { usePhotoPanelStore } from 'store/panel/usePhotoPanelStore';
 
-interface PhotoPanelProps {
-  handlePhotoClick: () => void;
-}
 
-export default function PhotoPanel({ handlePhotoClick }: PhotoPanelProps) {
+export default function PhotoPanel() {
   const {
-    setPhotoUrl,
     selectedPhotoId,
     setSelectedPhotoId,
     photoObjects,
@@ -17,15 +13,22 @@ export default function PhotoPanel({ handlePhotoClick }: PhotoPanelProps) {
   } = usePhotoPanelStore();
   const [deleteSnackOpen, setDeleteSnackOpen] = useState(false);
 
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageDataURL = e.target?.result as string;
-        setPhotoUrl(imageDataURL);
-        handlePhotoClick();
+        const newPhotoObject = {
+          id: Date.now().toString(),
+          imageUrl: imageDataURL,
+          x: 10,
+          y: 10,
+          dragging: false,
+          offsetX: 0,
+          offsetY: 0,
+        };
+        setPhotoObjects([...photoObjects, newPhotoObject]);
       };
       reader.readAsDataURL(file);
     }

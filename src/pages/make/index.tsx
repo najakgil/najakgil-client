@@ -57,7 +57,7 @@ const Make = () => {
   // 스티커
   const { stickerObjects, setStickerObjects, setSelectedStickerId } = useStickerPanelStore();
   // 사진
-  const { photoObjects, setPhotoObjects, setSelectedPhotoId, photoUrl } = usePhotoPanelStore();
+  const { photoObjects, setPhotoObjects, setSelectedPhotoId} = usePhotoPanelStore();
   // 브러쉬
   const { brushObjects, setBrushObjects, brushColor, brushSize } = useBrushPanelStore();
 
@@ -183,24 +183,6 @@ const Make = () => {
       offsetY: 0,
     };
     setStickerObjects([...stickerObjects, newStickerObject]);
-  };
-
-  // [사진] 사진 오브젝트 추가
-  const handlePhotoClick = () => {
-    if (!canvas) {
-      return;
-    }
-
-    const newPhotoObject = {
-      id: `${Date.now()}`,
-      imageUrl: photoUrl,
-      x: 10,
-      y: 10,
-      dragging: false,
-      offsetX: 0,
-      offsetY: 0,
-    };
-    setPhotoObjects([...photoObjects, newPhotoObject]);
   };
 
   // [텍스트] 텍스트 내용 입력
@@ -924,7 +906,6 @@ const Make = () => {
           inputText={inputText}
           selectedTextId={selectedTextId}
           handleStickerClick={handleStickerClick}
-          handlePhotoClick={handlePhotoClick}
         />
       )}
       {activeTab === 3 && <BackgroundTab />}

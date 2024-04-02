@@ -36,7 +36,6 @@ interface DecorationTabProps {
   inputText: string;
   selectedTextId: string | null;
   handleStickerClick: (stickerId: number) => void;
-  handlePhotoClick: () => void;
 }
 
 export default function DecorationTab({
@@ -48,7 +47,6 @@ export default function DecorationTab({
   inputText,
   selectedTextId,
   handleStickerClick,
-  handlePhotoClick,
 }: DecorationTabProps) {
   const [openBackSnackBarOpen, setOpenBackSnackBarOpen] = useState(false);
   const [openResetSnackBarOpen, setOpenResetSnackBarOpen] = useState(false);
@@ -109,7 +107,7 @@ export default function DecorationTab({
       {activeDecorationTag === 'sticker' && (
         <StickerPanel handleStickerClick={handleStickerClick} />
       )}
-      {activeDecorationTag === 'photo' && <PhotoPanel handlePhotoClick={handlePhotoClick}/>}
+      {activeDecorationTag === 'photo' && <PhotoPanel/>}
       {activeDecorationTag === 'brush' && <BrushPanel />}
       <SnackBar
         open={openBackSnackBarOpen}
