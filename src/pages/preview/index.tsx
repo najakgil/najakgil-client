@@ -1,5 +1,5 @@
-import domtoimage from 'dom-to-image';
-import { saveAs } from 'file-saver';
+// import domtoimage from 'dom-to-image';
+// import { saveAs } from 'file-saver';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from 'components/button';
 import { Header } from 'components/header';
@@ -12,12 +12,13 @@ import { useStickerPanelStore } from 'store/panel/useStickerPanelStore';
 import { useTextPanelStore } from 'store/panel/useTextPanelStore';
 import { useBackgroundTabStore } from 'store/tab/useBackgroundTabStore';
 import { useCharacterTabStore } from 'store/tab/useCharacterTabStore';
+import { toPng } from 'html-to-image';
 
 const PreviewPage = () => {
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
-  const cardRef = useRef(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [downloadSnackBarOpen, setDownloadSnackBarOpen] = useState(false);
   const [copySnackBarOpen, setCopySnackBarOpen] = useState(false);
   const { textObjects } = useTextPanelStore();
@@ -85,16 +86,34 @@ const PreviewPage = () => {
     });
   }, [canvas, textObjects, stickerObjects, photoObjects, brushObjects, brushColor, brushSize]);
 
+  // const downloadImage = () => {
+  //   const card = cardRef.current;
+  //   if (card) {
+  //     domtoimage.toBlob(card).then((blob) => {
+  //       saveAs(blob, 'najakgil.png');
+  //       setDownloadSnackBarOpen(true);
+  //       setTimeout(() => {
+  //         setDownloadSnackBarOpen(false);
+  //       }, 3000);
+  //     });
+  //   } else {
+  //     console.error('오류 발생');
+  //   }
+  // };
+
   const downloadImage = () => {
     const card = cardRef.current;
     if (card) {
-      domtoimage.toBlob(card).then((blob) => {
-        saveAs(blob, 'najakgil.png');
-        setDownloadSnackBarOpen(true);
-        setTimeout(() => {
-          setDownloadSnackBarOpen(false);
-        }, 3000);
+      toPng(card).then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = 'najakgil.png';
+        link.href = dataUrl;
+        link.click();
       });
+      setDownloadSnackBarOpen(true);
+      setTimeout(() => {
+        setDownloadSnackBarOpen(false);
+      }, 3000);
     } else {
       console.error('오류 발생');
     }
