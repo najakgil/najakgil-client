@@ -33,7 +33,6 @@ export default function TextPanel({
     setTextObjects,
   } = useTextPanelStore();
 
-  // const [editSnackOpen, setEditSnackOpen] = useState(false);
   const [deleteSnackOpen, setDeleteSnackOpen] = useState(false);
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
