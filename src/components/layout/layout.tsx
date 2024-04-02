@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   min-width: 360px;
   max-width: 450px;
-  height: 100%;
+  height: 100vh;
   margin: 0 auto;
   background-color: white;
 `;

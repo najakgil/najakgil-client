@@ -93,6 +93,7 @@ export default function PhotoPanel() {
 
 export const wrapper = css({
   padding: '20px',
+  backgroundColor: 'white',
 });
 
 export const contentBox = css({

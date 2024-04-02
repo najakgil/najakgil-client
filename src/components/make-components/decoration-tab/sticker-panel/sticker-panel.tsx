@@ -78,6 +78,7 @@ export default function StickerPanel({ handleStickerClick }: StickerPanelProps) 
 
 const wrapper = css({
   padding: '20px 10px 9px 10px',
+  backgroundColor: 'white',
 });
 
 const stickerContainer = css({
@@ -86,7 +87,6 @@ const stickerContainer = css({
   justifyItems: 'center',
   justifyContent: 'center',
   width: '100%',
-  // padding: '9px 10px 9px 10px',
   gridGap: '10px',
   backgroundColor: 'white',
 });

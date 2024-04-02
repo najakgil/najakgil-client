@@ -75,6 +75,7 @@ export default function BrushPanel() {
 
 export const wrapper = css({
   padding: '20px',
+  backgroundColor: 'white',
 });
 
 export const contentBox = css({
