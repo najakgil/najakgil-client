@@ -15,8 +15,9 @@ export default function BrushPanel() {
     setBrushSize(parseInt(event.target.value));
   };
 
+  // TO DO : 이전 버튼 클릭 시 이전 브러쉬 객체를 삭제하는 로직 구현
   const handleBackButtonClick = () => {
-    const latestBrushObject = brushObjects[brushObjects.length - 1];
+    const latestBrushObject = brushObjects[brushObjects.length - 2];
     const updatedBrushObjects = brushObjects.filter(
       (brushObject) => brushObject.id !== latestBrushObject.id,
     );
