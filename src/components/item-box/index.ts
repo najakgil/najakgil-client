@@ -1,1 +1,0 @@
-export {default as ItemBox} from './item-box';
